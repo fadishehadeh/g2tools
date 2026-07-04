@@ -1,6 +1,7 @@
 <?php
 session_start();
 require '../../config.php';
+require '../../mailer.php';
 require_login();
 if (!is_finance_admin()) { header('Location: /g2forms/'); exit; }
 
@@ -40,6 +41,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mods    = ($role === 'user') ? json_encode(array_values(array_filter($modules))) : null;
             db()->prepare("INSERT INTO users (name,email,username,password,role,office,access_modules,is_active) VALUES (?,?,?,?,?,?,?,1)")
                ->execute([$name, $email, $username, $hash, $role, $office ?: null, $mods]);
+            if ($email) {
+                $body = mail_template('Welcome to G2 Tools', "
+                <p>Hi <strong>".htmlspecialchars($name)."</strong>,</p>
+                <p>Your G2 Tools account has been created. Here are your login details:</p>
+                <div class='info-box'><strong>Login URL</strong> https://g2tools.greydoha.com/login.php</div>
+                <div class='info-box'><strong>Username</strong> ".htmlspecialchars($username)."</div>
+                <div class='info-box'><strong>Password</strong> ".htmlspecialchars($password)."</div>
+                <p>Please change your password after your first login.</p>
+                <a class='btn' href='https://g2tools.greydoha.com/login.php'>Log In Now</a>");
+                send_mail(['email'=>$email,'name'=>$name], 'Welcome to G2 Tools', $body);
+            }
             $_SESSION['flash'] = ['type'=>'ok','msg'=>"User '$name' created successfully."];
             header('Location: index.php'); exit;
         }

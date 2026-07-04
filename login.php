@@ -119,6 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="password" id="password" name="password" placeholder="••••••••" required>
       </div>
       <button type="submit">Sign in →</button>
+      <p style="text-align:center;margin-top:14px;font-size:13px">
+        <a href="/g2forms/forgot-password.php" style="color:#aaa;text-decoration:none">Forgot password?</a>
+      </p>
     </form>
     <p style="text-align:center;margin-top:20px;font-size:13px;color:#aaa">
       Don't have an account?

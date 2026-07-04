@@ -160,6 +160,7 @@ require '../config.php';
         <div class="field"><label class="field-label">Date <span style="color:#FF3D33">*</span></label><input type="text" name="rep_date" value="<?= date('j-M-Y') ?>" required></div>
       </div>
       <div class="field" style="max-width:300px"><label class="field-label">Designation</label><input type="text" name="rep_designation" placeholder="e.g. Finance Manager"></div>
+      <div class="field" style="max-width:300px"><label class="field-label">Email Address <span style="color:#FF3D33">*</span></label><input type="email" name="rep_email" placeholder="your@email.com" required></div>
       <div class="notice" style="margin-top:16px">
         <strong style="display:block;font-weight:700;color:#b45309;margin-bottom:4px">Qatar Tax Notice</strong>
         As per Qatar tax Law, all FOREIGN VENDORS providing services are entitled to 5% withholding tax.

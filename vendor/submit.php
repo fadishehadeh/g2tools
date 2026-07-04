@@ -2,6 +2,7 @@
 // PUBLIC — no login required
 if (session_status() === PHP_SESSION_NONE) session_start();
 require '../config.php';
+require '../mailer.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /g2forms/vendor/'); exit;
@@ -37,6 +38,7 @@ $data = [
     'rep_name'           => s('rep_name'),
     'rep_date'           => s('rep_date'),
     'rep_designation'    => s('rep_designation'),
+    'rep_email'          => s('rep_email'),
 ];
 
 // --- Handle file uploads ---
@@ -292,6 +294,17 @@ if (!empty($recipients)) {
     $msg .= "--{$boundary}--";
 
     $email_sent = mail(implode(', ', $recipients), $subject, $msg, $headers);
+}
+
+// Send confirmation to vendor
+if (!empty($data['rep_email'])) {
+    $body = mail_template('Vendor Registration Received', "
+        <p>Dear <strong>".htmlspecialchars($data['rep_name'])."</strong>,</p>
+        <p>Thank you for submitting your vendor registration for <strong>".htmlspecialchars($data['legal_name'])."</strong>. We have received your application and our team will review it shortly.</p>
+        <div class='info-box'><strong>Company</strong> ".htmlspecialchars($data['legal_name'])."</div>
+        <div class='info-box'><strong>Submitted On</strong> ".date('d M Y')."</div>
+        <p>If you have any questions, please contact us at <a href='mailto:hrdoha@greydoha.com'>hrdoha@greydoha.com</a>.</p>");
+    send_mail(['email'=>$data['rep_email'],'name'=>$data['rep_name']], 'Vendor Registration Received — G2 Group', $body);
 }
 
 // Redirect to thank-you
