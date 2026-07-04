@@ -1,0 +1,60 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Segoe UI', Arial, sans-serif; background: #f2f3f6; color: #1a1a1a; }
+
+.sm-auth-bg {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: #0f0f0f;
+  background-image: radial-gradient(ellipse at 70% 30%, rgba(255,61,51,.18) 0%, transparent 55%);
+  padding: 24px;
+}
+.sm-auth-card {
+  background: #fff; border-radius: 18px; padding: 40px 36px;
+  width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+.sm-auth-brand { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:800;
+  letter-spacing:1.5px; text-transform:uppercase; color:#FF3D33; margin-bottom:18px; }
+.sm-auth-dot { width:7px; height:7px; border-radius:50%; background:#FF3D33; display:block; }
+.sm-auth-card h1 { font-size:22px; font-weight:900; margin:0 0 6px; letter-spacing:-0.5px; }
+.sm-auth-sub { font-size:13px; color:#999; line-height:1.6; margin: 0 0 22px; }
+
+.sm-field { margin-bottom: 16px; }
+.sm-field label { display:block; font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.5px; color:#999; margin-bottom:6px; }
+.sm-field input, .sm-field select, .sm-field textarea {
+  width:100%; padding:11px 14px; border:1.5px solid #e8eaee; border-radius:9px;
+  font-size:14px; font-family:inherit; outline:none; transition:border-color .15s;
+}
+.sm-field input:focus, .sm-field select:focus, .sm-field textarea:focus { border-color:#FF3D33; }
+
+.sm-btn-primary {
+  width:100%; padding:13px; background:#FF3D33; color:#fff; border:none;
+  border-radius:30px; font-size:14px; font-weight:700; cursor:pointer; transition:background .15s;
+}
+.sm-btn-primary:hover { background:#c0170e; }
+
+.sm-msg { padding:11px 14px; border-radius:8px; font-size:13px; margin-bottom:16px; }
+.sm-msg-ok  { background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; }
+.sm-msg-err { background:#fff5f5; border:1px solid #fca5a5; color:#dc2626; }
+
+.sm-auth-alt { display:block; text-align:center; font-size:12.5px; color:#aaa; text-decoration:none; margin-top:18px; }
+.sm-auth-alt:hover { color:#FF3D33; }
+
+/* ── App shell (post-login) ── */
+.sm-shell { display:flex; min-height:100vh; }
+.sm-sidebar { width:230px; min-width:230px; background:#0f0f0f; color:#fff; padding:20px 0;
+  position:fixed; top:0; left:0; height:100vh; }
+.sm-sidebar-logo { padding:0 20px 20px; font-weight:800; font-size:13px; letter-spacing:.5px;
+  border-bottom:1px solid rgba(255,255,255,.06); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.sm-sidebar-logo .dot { width:7px; height:7px; border-radius:50%; background:#FF3D33; }
+.sm-nav-item { display:flex; align-items:center; gap:10px; padding:10px 20px; color:rgba(255,255,255,.5);
+  text-decoration:none; font-size:13px; font-weight:500; border-left:2.5px solid transparent; }
+.sm-nav-item:hover { color:#fff; background:rgba(255,255,255,.05); }
+.sm-nav-item.active { color:#fff; background:rgba(255,61,51,.14); border-left-color:#FF3D33; }
+.sm-main { margin-left:230px; flex:1; padding:32px 40px; }
+.sm-topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+.sm-topbar h1 { font-size:22px; font-weight:900; letter-spacing:-0.5px; margin:0; }
+.sm-user-chip { display:flex; align-items:center; gap:10px; font-size:13px; color:#888; }
+.sm-user-chip strong { color:#1a1a1a; }
+.sm-role-badge { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+  padding:2px 9px; border-radius:20px; background:#fff3f2; color:#FF3D33; }

@@ -1,0 +1,195 @@
+/* ── App shell ── */
+html, body { margin: 0; padding: 0; min-height: 100vh; }
+body { display: flex; font-family: -apple-system, 'Segoe UI', Arial, sans-serif; background: #f2f3f6; }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 248px; min-width: 248px;
+  background: #0d0f14;
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0;
+  height: 100vh; z-index: 200; overflow: hidden;
+  border-right: 1px solid rgba(255,255,255,.05);
+  box-shadow: 6px 0 32px rgba(0,0,0,.25);
+}
+
+/* ── Logo ── */
+.sb-logo {
+  padding: 20px 18px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.sb-logo a { display: block; }
+.sb-logo img { height: 26px; display: block; filter: brightness(0) invert(1); opacity: .9; }
+
+/* ── Nav scroll ── */
+.sb-nav {
+  flex: 1; padding: 8px 0 6px;
+  overflow-y: auto; overflow-x: hidden;
+}
+.sb-nav::-webkit-scrollbar { width: 2px; }
+.sb-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.06); border-radius: 2px; }
+
+/* ── Home flat link ── */
+.sb-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px;
+  color: rgba(255,255,255,.4);
+  text-decoration: none;
+  font-size: 13px; font-weight: 500;
+  border-radius: 8px;
+  margin: 1px 8px;
+  transition: color .15s, background .15s;
+  white-space: nowrap;
+}
+.sb-item:hover { color: rgba(255,255,255,.8); background: rgba(255,255,255,.06); }
+.sb-item.active {
+  color: #fff; font-weight: 600;
+  background: rgba(255,61,51,.18);
+}
+.sb-icon {
+  width: 18px; text-align: center; flex-shrink: 0;
+  font-size: 14px; line-height: 1;
+}
+
+/* ── Collapsible groups ── */
+.sb-group { margin: 2px 0; }
+
+/* Group header — visually distinct: pill background, uppercase label */
+.sb-group-header {
+  display: flex; align-items: center; gap: 9px;
+  width: calc(100% - 16px); margin: 0 8px;
+  padding: 8px 10px;
+  background: none; border: none; cursor: pointer;
+  border-radius: 8px;
+  text-align: left;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.sb-group-header:hover { background: rgba(255,255,255,.05); }
+.sb-group.open > .sb-group-header { background: rgba(255,255,255,.06); }
+
+/* Icon bubble */
+.sb-group-header .sb-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.07);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+  transition: background .15s;
+}
+.sb-group.open .sb-group-header .sb-icon,
+.sb-group.has-active .sb-group-header .sb-icon {
+  background: rgba(255,61,51,.2);
+}
+
+.sb-group-label {
+  flex: 1;
+  font-size: 12.5px; font-weight: 700;
+  color: rgba(255,255,255,.55);
+  letter-spacing: .2px;
+  transition: color .15s;
+}
+.sb-group.open > .sb-group-header .sb-group-label,
+.sb-group.has-active > .sb-group-header .sb-group-label {
+  color: rgba(255,255,255,.9);
+}
+
+.sb-chevron {
+  font-size: 11px;
+  color: rgba(255,255,255,.2);
+  transition: transform .22s cubic-bezier(.4,0,.2,1), color .15s;
+  display: inline-block;
+}
+.sb-group.open .sb-chevron { transform: rotate(90deg); color: rgba(255,255,255,.5); }
+
+/* ── Sub-items ── */
+.sb-group-body {
+  overflow: hidden; max-height: 0;
+  transition: max-height .25s cubic-bezier(.4,0,.2,1);
+}
+.sb-group.open .sb-group-body { max-height: 700px; }
+
+.sb-group-body .sb-item {
+  padding: 7px 12px 7px 44px;
+  font-size: 12.5px;
+  color: rgba(255,255,255,.35);
+  margin: 0 8px;
+  font-weight: 500;
+  position: relative;
+}
+/* Thin vertical line connecting sub-items */
+.sb-group-body::before {
+  content: '';
+  position: absolute;
+  left: 29px; top: 0; bottom: 0;
+  width: 1px; background: rgba(255,255,255,.05);
+  pointer-events: none;
+}
+.sb-group-body { position: relative; }
+
+.sb-group-body .sb-item:hover { color: rgba(255,255,255,.78); background: rgba(255,255,255,.05); }
+
+.sb-group-body .sb-item.active {
+  color: #fff; font-weight: 600;
+  background: rgba(255,61,51,.15);
+}
+.sb-group-body .sb-item.active::after {
+  content: '';
+  position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%);
+  width: 4px; height: 4px;
+  border-radius: 50%; background: #FF3D33;
+}
+
+/* ── User footer ── */
+.sb-user {
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0; background: rgba(0,0,0,.15);
+}
+.sb-avatar {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: linear-gradient(135deg, #FF3D33, #b91c1c);
+  color: #fff; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+  box-shadow: 0 2px 10px rgba(255,61,51,.4);
+}
+.sb-info { flex: 1; min-width: 0; }
+.sb-name { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-role {
+  display: inline-block; margin-top: 3px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  color: #FF3D33; background: rgba(255,61,51,.15);
+  padding: 1px 6px; border-radius: 4px;
+}
+.sb-logout {
+  color: rgba(255,255,255,.18); text-decoration: none; font-size: 15px;
+  flex-shrink: 0; transition: color .15s, background .15s;
+  display: flex; align-items: center; padding: 6px;
+  border-radius: 7px;
+}
+.sb-logout:hover { color: #ff6b60; background: rgba(255,61,51,.12); }
+
+/* ── Main content ── */
+.main-content {
+  margin-left: 248px; flex: 1;
+  min-height: 100vh; display: flex; flex-direction: column;
+}
+
+/* ── Top bar ── */
+.topbar {
+  height: 54px; background: #fff;
+  border-bottom: 1px solid #eef0f3;
+  display: flex; align-items: center;
+  padding: 0 36px; gap: 10px; flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+.topbar-title { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+.topbar-back  { font-size: 12.5px; color: #bbb; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+.topbar-back:hover { color: #FF3D33; }
+.topbar-back::before { content: '←'; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
