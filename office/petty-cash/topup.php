@@ -64,17 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
   <?php endif; ?>
   <form method="POST">
-    <input type="hidden" name="office" value="<?= $office ?>">
     <div class="form-body">
       <div class="section">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-          <?php foreach(OFFICES as $k=>$o): ?>
-          <label style="display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid <?= $office===$k?'#FF3D33':'#eef0f3' ?>;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:#555">
-            <input type="radio" name="office" value="<?= $k ?>" <?= $office===$k?'checked':'' ?> onchange="this.form.submit()" style="accent-color:#FF3D33">
-            <?= $k==='doha'?'🇶🇦':'🇱🇧' ?> <?= $o['label'] ?>
-          </label>
-          <?php endforeach; ?>
-        </div>
+        <input type="hidden" name="office" value="<?= $office ?>">
         <div class="field"><label class="field-label">Amount (<?= $cur ?>) <span style="color:#FF3D33">*</span></label>
           <input type="number" name="amount" step="0.01" min="0.01" placeholder="0.00" required></div>
         <div class="field"><label class="field-label">Reference</label>
