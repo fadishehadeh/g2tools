@@ -1,0 +1,8 @@
+storage/pdfs/*.pdf
+storage/vendor-uploads/*
+!storage/pdfs/.gitkeep
+!storage/vendor-uploads/.gitkeep
+storage/pdfs/logo_tmp_*.png
+*.log
+.env
+config.local.php
