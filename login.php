@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require 'config.php';
 
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <nav>
   <a class="logo" href="<?= BASE_URL ?>/">
-    <img src="/g2forms/logo.png" style="height:36px;display:block">
+    <img src="<?= BASE_URL ?>/logo.png" style="height:36px;display:block">
   </a>
 </nav>
 
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <button type="submit">Sign in →</button>
       <p style="text-align:center;margin-top:14px;font-size:13px">
-        <a href="/g2forms/forgot-password.php" style="color:#aaa;text-decoration:none">Forgot password?</a>
+        <a href="/forgot-password.php" style="color:#aaa;text-decoration:none">Forgot password?</a>
       </p>
     </form>
     <p style="text-align:center;margin-top:20px;font-size:13px;color:#aaa">

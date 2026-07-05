@@ -1,10 +1,10 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
 
 $sub_id = (int)($_GET['id'] ?? 0);
-if (!$sub_id) { header('Location: /g2forms/'); exit; }
+if (!$sub_id) { header('Location: /'); exit; }
 
 $user = current_user();
 $sub  = db()->prepare("SELECT * FROM form_submissions WHERE id = ?");
@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'email
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document Ready — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   .confirm-wrap { max-width: 560px; margin: 0 auto; padding: 48px 24px 80px; }
   .success-badge { width: 64px; height: 64px; background: #f0fdf4; border: 2px solid #bbf7d0;
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'email
 <?php require '../_sidebar.php'; ?>
 <div class="main-content">
 <div class="topbar">
-  <a class="topbar-back" href="/g2forms/">G2 Tools</a>
+  <a class="topbar-back" href="/">G2 Tools</a>
   <span class="topbar-title">Document Ready</span>
 </div>
 <div class="confirm-wrap">
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'email
   <?php endif; ?>
 
   <div class="action-grid">
-    <a class="action-card" href="/g2forms/download.php?id=<?= $sub_id ?>">
+    <a class="action-card" href="/download.php?id=<?= $sub_id ?>">
       <span class="ac-icon">⬇️</span>
       <span class="ac-title">Download PDF</span>
       <span class="ac-desc">Save the PDF directly to your device.</span>
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'email
     </form>
   </div>
 
-  <a class="back-link" href="/g2forms/">← Back to G2 Tools</a>
+  <a class="back-link" href="/">← Back to G2 Tools</a>
 </div>
 </div>
 <script>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../lib/bootstrap.php';
 sm_require_staff();
 $staff = sm_current_staff();
@@ -48,7 +48,7 @@ $managers = sm_db()->query("SELECT id,name FROM " . g2_users_table() . " WHERE s
 <head>
 <meta charset="UTF-8">
 <title>Edit Client — G2 SM Calendar Tool</title>
-<link rel="stylesheet" href="/g2forms/sm-calendar/sm.css">
+<link rel="stylesheet" href="/sm-calendar/sm.css">
 <style>
   .panel { background:#fff; border:1px solid #e8eaee; border-radius:14px; padding:24px; max-width:560px; }
   .current-logo { width:64px; height:64px; border-radius:12px; background:#f6f7f9; border:1px solid #e8eaee;
@@ -71,7 +71,7 @@ $managers = sm_db()->query("SELECT id,name FROM " . g2_users_table() . " WHERE s
 
     <div class="panel">
       <?php if ($client['logo']): ?>
-      <div class="current-logo"><img src="/g2forms/sm-calendar/storage/logos/<?= htmlspecialchars($client['logo']) ?>"></div>
+      <div class="current-logo"><img src="/sm-calendar/storage/logos/<?= htmlspecialchars($client['logo']) ?>"></div>
       <?php endif; ?>
       <form method="POST" enctype="multipart/form-data">
         <div class="sm-field"><label>Client Name</label><input type="text" name="name" value="<?= htmlspecialchars($client['name']) ?>" required></div>

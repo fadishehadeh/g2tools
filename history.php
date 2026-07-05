@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require 'config.php';
 require_login();
@@ -32,7 +32,7 @@ function form_serial(string $type, array $data): string {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Submissions — G2</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
   .page-wrap { padding: 40px 40px 60px; }
   .page-header { margin-bottom: 28px; }
@@ -83,7 +83,7 @@ function form_serial(string $type, array $data): string {
       <div class="table-card">
         <div class="empty">
           <p>No submissions yet.</p>
-          <a href="/g2forms/">Submit a form</a>
+          <a href="/">Submit a form</a>
         </div>
       </div>
     <?php else: ?>
@@ -101,7 +101,7 @@ function form_serial(string $type, array $data): string {
               <td><?= form_summary($s['form_type'], $data) ?></td>
               <td><?= form_serial($s['form_type'], $data) ?></td>
               <td style="color:#888"><?= date('d M Y, H:i', strtotime($s['created_at'])) ?></td>
-              <td><a class="dl-btn" href="/g2forms/download.php?id=<?= $s['id'] ?>">⬇ PDF</a></td>
+              <td><a class="dl-btn" href="/download.php?id=<?= $s['id'] ?>">⬇ PDF</a></td>
             </tr>
             <?php endforeach; ?>
           </tbody>

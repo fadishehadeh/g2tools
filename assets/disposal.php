@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -137,8 +137,8 @@ $eligible = db()->query("SELECT a.id,a.tag,a.name,a.purchase_value,c.name cat_na
 <head>
 <meta charset="UTF-8">
 <title>Asset Disposal — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
 .pw{padding:28px 36px 60px;max-width:1000px}
 .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}

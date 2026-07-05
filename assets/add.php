@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
 require_it_admin_or_superadmin();
 
 function require_it_admin_or_superadmin(): void {
-    if (!is_it_admin()) { header('Location: /g2forms/assets/'); exit; }
+    if (!is_it_admin()) { header('Location: /assets/'); exit; }
 }
 
 $error = '';
@@ -69,8 +69,8 @@ $suggested_tag = 'G2-' . str_pad($next_num, 5, '0', STR_PAD_LEFT);
 <head>
 <meta charset="UTF-8">
 <title>Add Asset — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>.form-card{max-width:700px}</style>
 </head>
 <body>

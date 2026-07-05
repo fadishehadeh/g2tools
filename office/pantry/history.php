@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require_login();
@@ -20,8 +20,8 @@ $logs = $stmt->fetchAll();
 <head>
 <meta charset="UTF-8">
 <title>Pantry History — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   .hist-wrap { padding:32px 40px 80px; max-width:860px; }
   .log-table { width:100%; border-collapse:collapse; background:#fff; border:1px solid #e8eaee;

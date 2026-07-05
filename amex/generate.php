@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -316,5 +316,5 @@ $sub_id = db()->lastInsertId();
 // Clean up temp GIF conversion if used
 if (isset($tmpLogo) && file_exists($tmpLogo)) @unlink($tmpLogo);
 
-header('Location: /g2forms/amex/confirm.php?id=' . $sub_id);
+header('Location: /amex/confirm.php?id=' . $sub_id);
 exit;

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require 'config.php';
 
@@ -10,7 +10,7 @@ $stmt->execute([$token]);
 $row = $stmt->fetch();
 
 if (!$token || !$row) {
-    $err = 'This reset link is invalid or has expired. <a href="/g2forms/forgot-password.php">Request a new one</a>.';
+    $err = 'This reset link is invalid or has expired. <a href="/forgot-password.php">Request a new one</a>.';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $row) {
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $row) {
         db()->prepare("UPDATE users SET password=? WHERE id=?")->execute([$hash, $row['user_id']]);
         db()->prepare("UPDATE password_reset_tokens SET used=1 WHERE token=?")->execute([$token]);
         $_SESSION['flash'] = ['type'=>'ok','msg'=>'Password updated. Please log in.'];
-        header('Location: /g2forms/login.php'); exit;
+        header('Location: /login.php'); exit;
     }
 }
 ?><!DOCTYPE html>
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $row) {
 <head>
 <meta charset="UTF-8">
 <title>Reset Password — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/form.css">
 <style>
 body{background:#f2f3f6;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
 .login-card{background:#fff;border-radius:14px;padding:40px;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
@@ -72,7 +72,7 @@ body{background:#f2f3f6;display:flex;align-items:center;justify-content:center;m
     <button type="submit" class="btn-full">Set New Password</button>
   </form>
   <?php endif; ?>
-  <div class="back"><a href="/g2forms/login.php">← Back to Login</a></div>
+  <div class="back"><a href="/login.php">← Back to Login</a></div>
 </div>
 </body>
 </html>

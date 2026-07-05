@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 // PUBLIC — no login required
 if (session_status() === PHP_SESSION_NONE) session_start();
 require '../config.php';
 require '../mailer.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /g2forms/vendor/'); exit;
+    header('Location: /vendor/'); exit;
 }
 
 function s($k) { return isset($_POST[$k]) ? trim(strip_tags($_POST[$k])) : ''; }
@@ -308,5 +308,5 @@ if (!empty($data['rep_email'])) {
 }
 
 // Redirect to thank-you
-header('Location: /g2forms/vendor/thankyou.php');
+header('Location: /vendor/thankyou.php');
 exit;

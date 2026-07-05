@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require_login();
-if (!is_finance_admin()) { header('Location: /g2forms/'); exit; }
+if (!is_finance_admin()) { header('Location: /'); exit; }
 
 $q    = trim($_GET['q'] ?? '');
 $role = $_GET['role'] ?? '';
@@ -29,7 +29,7 @@ $role_colors = [
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>User Management — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
 *,*::before,*::after{box-sizing:border-box}
 .pw{padding:30px 36px 60px;max-width:1100px}
@@ -68,7 +68,7 @@ tr:hover td{background:#fafbfc}
 <?php require '../../_sidebar.php'; ?>
 <div class="main-content">
 <div class="topbar">
-  <a class="topbar-back" href="/g2forms/admin/">← Admin</a>
+  <a class="topbar-back" href="/admin/">← Admin</a>
   <span class="topbar-title">User Management</span>
 </div>
 <div class="pw">

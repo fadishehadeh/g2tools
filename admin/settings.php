@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
-if (!is_superadmin()) { header('Location: /g2forms/'); exit; }
+if (!is_superadmin()) { header('Location: /'); exit; }
 
 $success = $error = '';
 
@@ -125,7 +125,7 @@ $e3 = get_setting('finance_email_3');
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Settings — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   .page-wrap { padding: 40px 48px 80px; max-width: 860px; }

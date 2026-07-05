@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -113,8 +113,8 @@ $recent_logs = db()->query("SELECT il.*, u.name uname FROM asset_import_log il L
 <head>
 <meta charset="UTF-8">
 <title>Bulk Import — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
 .pw{padding:28px 36px 60px;max-width:800px}
 .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}

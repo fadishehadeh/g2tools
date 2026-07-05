@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require_admin();
@@ -67,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <title>Review Request — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   .rw { max-width:600px; margin:0 auto; padding:28px 24px 80px; }
   .detail-card { background:#fff; border:1px solid #eef0f3; border-radius:14px; padding:26px; margin-bottom:18px; }

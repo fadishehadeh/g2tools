@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -100,8 +100,8 @@ $status_colors = ['active'=>['#f0fdf4','#16a34a'],'in_repair'=>['#fffbeb','#d977
 <head>
 <meta charset="UTF-8">
 <title><?= htmlspecialchars($a['name']) ?> — Assets</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
 .pw{padding:28px 36px 60px;max-width:960px}
 .asset-hero{display:flex;align-items:flex-start;gap:20px;margin-bottom:24px;flex-wrap:wrap}

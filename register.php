@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require 'config.php';
 
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <nav>
   <a class="logo" href="<?= BASE_URL ?>/login.php">
-    <img src="/g2forms/logo.png" style="height:36px;display:block">
+    <img src="/logo.png" style="height:36px;display:block">
   </a>
 </nav>
 

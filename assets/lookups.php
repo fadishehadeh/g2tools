@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
-if (!is_it_admin()) { header('Location: /g2forms/assets/'); exit; }
+if (!is_it_admin()) { header('Location: /assets/'); exit; }
 
 $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']);
 
@@ -38,7 +38,7 @@ $icons = ['📦','💻','🖥️','📱','🖨️','🔌','🪑','🚗','📷','
 <head>
 <meta charset="UTF-8">
 <title>Asset Lookups — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
 *,*::before,*::after{box-sizing:border-box}
 .pw{padding:30px 36px 60px;max-width:900px}

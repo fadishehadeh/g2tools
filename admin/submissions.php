@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_admin();
@@ -180,7 +180,7 @@ if (($_GET['export'] ?? '') === 'pdf') {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>All Submissions — G2 Admin</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; }
 
@@ -339,7 +339,7 @@ if (($_GET['export'] ?? '') === 'pdf') {
 
       <div class="filter-actions">
         <button class="btn-apply" type="submit">Apply</button>
-        <a class="clear-link" href="/g2forms/admin/submissions.php">Clear</a>
+        <a class="clear-link" href="/admin/submissions.php">Clear</a>
       </div>
     </form>
 
@@ -405,7 +405,7 @@ if (($_GET['export'] ?? '') === 'pdf') {
             </div>
           </td>
           <td style="color:#888;white-space:nowrap"><?= date('d M Y, H:i', strtotime($s['created_at'])) ?></td>
-          <td><a class="dl-btn" href="/g2forms/download.php?id=<?= $s['id'] ?>">⬇ PDF</a></td>
+          <td><a class="dl-btn" href="/download.php?id=<?= $s['id'] ?>">⬇ PDF</a></td>
         </tr>
         <?php endforeach; ?>
       </tbody>

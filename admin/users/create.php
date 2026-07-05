@@ -1,9 +1,9 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require '../../mailer.php';
 require_login();
-if (!is_finance_admin()) { header('Location: /g2forms/'); exit; }
+if (!is_finance_admin()) { header('Location: /'); exit; }
 
 $error = '';
 $MODULES = [
@@ -62,8 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <title>Create User — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
 .form-card{max-width:600px}
 .modules-grid{display:grid;gap:10px;margin-top:6px}

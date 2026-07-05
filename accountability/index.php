@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -8,8 +8,8 @@ require_login();
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Accountability for Company Property — G2</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 </head>
 <body>
 
@@ -17,7 +17,7 @@ require_login();
 
 <div class="main-content">
 <div class="topbar">
-  <a class="topbar-back" href="/g2forms/">Forms</a>
+  <a class="topbar-back" href="/">Forms</a>
   <span class="topbar-title">Accountability for Company Property</span>
 </div>
 <div class="form-page-wrap">
@@ -25,7 +25,7 @@ require_login();
 
   <div class="form-header">
     <div class="fh-logo">
-      <img src="/g2forms/logo.png" style="height:38px;display:block">
+      <img src="/logo.png" style="height:38px;display:block">
     </div>
     <div class="fh-divider"></div>
     <div class="fh-text">
@@ -44,7 +44,7 @@ require_login();
         <option value="pn" data-logo="/g2forms/PN.gif">PIN and Notch</option>
         <option value="grey" data-logo="/g2forms/grey.jpeg">Grey</option>
       </select>
-      <img id="companyLogoPreview" src="/g2forms/logo.png" style="height:28px;object-fit:contain">
+      <img id="companyLogoPreview" src="/logo.png" style="height:28px;object-fit:contain">
     </div>
   </div>
 

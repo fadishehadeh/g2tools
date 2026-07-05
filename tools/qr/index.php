@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require_login();
@@ -8,7 +8,7 @@ require_login();
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QR Code Generator — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --red:#FF3D33; --red-dk:#c0170e; --border:#e8eaee; --bg:#f6f7f9; --dark:#1a1a1a; --mid:#555; --muted:#888; }
@@ -98,7 +98,7 @@ require_login();
 
 <div class="main-content">
 <div class="topbar">
-  <a class="topbar-back" href="/g2forms/">G2 Tools</a>
+  <a class="topbar-back" href="/">G2 Tools</a>
   <span class="topbar-title">QR Code Generator</span>
 </div>
 <div class="page-wrap">

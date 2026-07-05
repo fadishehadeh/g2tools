@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // PUBLIC — no login required
 if (session_status() === PHP_SESSION_NONE) session_start();
 require '../config.php';
@@ -8,7 +8,7 @@ require '../config.php';
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vendor Registration — Grey Doha</title>
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   body { background: #f6f7f9; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 16px 80px; }
   .form-card { max-width: 700px; width: 100%; }
@@ -34,7 +34,7 @@ require '../config.php';
 <body>
 <div class="form-card">
   <div class="form-header">
-    <div class="fh-logo"><img src="/g2forms/grey.jpeg" style="height:38px;display:block;object-fit:contain;max-width:140px"></div>
+    <div class="fh-logo"><img src="/grey.jpeg" style="height:38px;display:block;object-fit:contain;max-width:140px"></div>
     <div class="fh-divider"></div>
     <div class="fh-text">
       <h1>Vendor's Registration</h1>

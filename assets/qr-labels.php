@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -28,7 +28,7 @@ if ($single_id) {
 <head>
 <meta charset="UTF-8">
 <title>QR Labels — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
 *,*::before,*::after{box-sizing:border-box}
 .pw{padding:28px 36px 60px}

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../lib/bootstrap.php';
 sm_require_staff();
 $staff = sm_current_staff();
@@ -62,7 +62,7 @@ $manager_names = array_column($managers, 'name', 'id');
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clients — G2 SM Calendar Tool</title>
-<link rel="stylesheet" href="/g2forms/sm-calendar/sm.css">
+<link rel="stylesheet" href="/sm-calendar/sm.css">
 <style>
   .cl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-top:20px; }
   .cl-card { background:#fff; border:1.5px solid #e8eaee; border-radius:14px; padding:20px; transition:border-color .15s; }
@@ -145,7 +145,7 @@ $manager_names = array_column($managers, 'name', 'id');
         <div class="cl-card-top">
           <div class="cl-logo">
             <?php if ($c['logo']): ?>
-            <img src="/g2forms/sm-calendar/storage/logos/<?= htmlspecialchars($c['logo']) ?>">
+            <img src="/sm-calendar/storage/logos/<?= htmlspecialchars($c['logo']) ?>">
             <?php else: ?>
             <span style="font-size:16px;font-weight:800;color:#ccc"><?= strtoupper(substr($c['name'],0,1)) ?></span>
             <?php endif; ?>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -49,7 +49,7 @@ if (($_GET['export']??'') === 'csv') {
 <head>
 <meta charset="UTF-8">
 <title>Audit Log — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
 *,*::before,*::after{box-sizing:border-box}
 .pw{padding:28px 36px 60px}

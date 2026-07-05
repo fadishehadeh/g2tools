@@ -1,10 +1,10 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
 
 $sub_id = (int)($_GET['id'] ?? 0);
-if (!$sub_id) { header('Location: /g2forms/'); exit; }
+if (!$sub_id) { header('Location: /'); exit; }
 
 $user = current_user();
 $sub  = db()->prepare("SELECT * FROM form_submissions WHERE id = ?");
@@ -81,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'email
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Form Ready — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   .confirm-wrap { max-width: 620px; margin: 0 auto; padding: 48px 24px 80px; }
 
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'email
 
 <div class="main-content">
 <div class="topbar">
-  <a class="topbar-back" href="/g2forms/amex/">New Form</a>
+  <a class="topbar-back" href="/amex/">New Form</a>
   <span class="topbar-title">Form Ready</span>
 </div>
 
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'email
   <?php endif; ?>
 
   <div class="action-grid">
-    <a class="action-card" href="/g2forms/download.php?id=<?= $sub_id ?>">
+    <a class="action-card" href="/download.php?id=<?= $sub_id ?>">
       <span class="ac-icon">⬇️</span>
       <span class="ac-title">Download PDF</span>
       <span class="ac-desc">Save the PDF directly to your device.</span>
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'email
     </form>
   </div>
 
-  <a class="back-link" href="/g2forms/">← Back to G2 Tools</a>
+  <a class="back-link" href="/">← Back to G2 Tools</a>
 </div>
 </div>
 

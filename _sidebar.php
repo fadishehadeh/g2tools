@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Shared sidebar — include after session_start() + require config.php
 $_cur = $_SERVER['REQUEST_URI'];
 $_u   = current_user();
@@ -32,13 +32,13 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
 ?>
 <aside class="sidebar">
   <div class="sb-logo">
-    <a href="/g2forms/"><img src="/g2forms/logo.png" alt="G2"></a>
+    <a href="/"><img src="/logo.png" alt="G2"></a>
   </div>
 
   <nav class="sb-nav">
 
     <!-- Home (no group) -->
-    <a class="sb-item<?= _sb_exact('/g2forms/') ?>" href="/g2forms/">
+    <a class="sb-item<?= _sb_exact('/g2forms/') ?>" href="/">
       <span class="sb-icon">⊞</span> Home
     </a>
 
@@ -54,17 +54,17 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <?php if (is_admin()): ?>
           <?php foreach (OFFICES as $_ok => $_ov): ?>
           <a class="sb-item<?= _sb_act('/g2forms/office/petty-cash/') && ($_GET['office']??'') === $_ok ? ' active' : '' ?>"
-             href="/g2forms/office/petty-cash/?office=<?= $_ok ?>">
+             href="/office/petty-cash/?office=<?= $_ok ?>">
             <span class="sb-icon">💸</span> Petty Cash <?= $_ov['flag'] ?>
           </a>
           <?php endforeach; ?>
         <?php elseif ($_user_office): ?>
           <a class="sb-item<?= _sb_act('/g2forms/office/petty-cash/') ? ' active' : '' ?>"
-             href="/g2forms/office/petty-cash/?office=<?= $_user_office ?>">
+             href="/office/petty-cash/?office=<?= $_user_office ?>">
             <span class="sb-icon">💸</span> Petty Cash <?= OFFICES[$_user_office]['flag'] ?? '' ?>
           </a>
         <?php endif; ?>
-        <a class="sb-item<?= _sb_act('/g2forms/office/pantry/') ?>" href="/g2forms/office/pantry/">
+        <a class="sb-item<?= _sb_act('/g2forms/office/pantry/') ?>" href="/office/pantry/">
           <span class="sb-icon">🍵</span> Pantry
         </a>
       </div>
@@ -80,22 +80,22 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <span class="sb-chevron">›</span>
       </button>
       <div class="sb-group-body">
-        <a class="sb-item<?= _sb_act('/g2forms/amex/') ?>" href="/g2forms/amex/">
+        <a class="sb-item<?= _sb_act('/g2forms/amex/') ?>" href="/amex/">
           <span class="sb-icon">💳</span> Credit Card Auth
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/accountability/') ?>" href="/g2forms/accountability/">
+        <a class="sb-item<?= _sb_act('/g2forms/accountability/') ?>" href="/accountability/">
           <span class="sb-icon">📦</span> Accountability
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/finance/debit-note/') ?>" href="/g2forms/finance/debit-note/">
+        <a class="sb-item<?= _sb_act('/g2forms/finance/debit-note/') ?>" href="/finance/debit-note/">
           <span class="sb-icon">📄</span> Debit Note
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/finance/credit-note/') ?>" href="/g2forms/finance/credit-note/">
+        <a class="sb-item<?= _sb_act('/g2forms/finance/credit-note/') ?>" href="/finance/credit-note/">
           <span class="sb-icon">📋</span> Credit Note
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/finance/vendor-recon/') ?>" href="/g2forms/finance/vendor-recon/">
+        <a class="sb-item<?= _sb_act('/g2forms/finance/vendor-recon/') ?>" href="/finance/vendor-recon/">
           <span class="sb-icon">📊</span> Vendor Recon
         </a>
-        <a class="sb-item<?= _sb_exact('/g2forms/history.php') ?>" href="/g2forms/history.php">
+        <a class="sb-item<?= _sb_exact('/g2forms/history.php') ?>" href="/history.php">
           <span class="sb-icon">☰</span> My Submissions
         </a>
       </div>
@@ -111,7 +111,7 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <span class="sb-chevron">›</span>
       </button>
       <div class="sb-group-body">
-        <a class="sb-item<?= _sb_act('/g2forms/vendor/') ?>" href="/g2forms/vendor/">
+        <a class="sb-item<?= _sb_act('/g2forms/vendor/') ?>" href="/vendor/">
           <span class="sb-icon">🏢</span> Vendor Registration
         </a>
       </div>
@@ -127,42 +127,42 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <span class="sb-chevron">›</span>
       </button>
       <div class="sb-group-body">
-        <a class="sb-item<?= _sb_exact('/g2forms/assets/') ?>" href="/g2forms/assets/">
+        <a class="sb-item<?= _sb_exact('/g2forms/assets/') ?>" href="/assets/">
           <span class="sb-icon">⊞</span> Dashboard
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/list') ?>" href="/g2forms/assets/list.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/list') ?>" href="/assets/list.php">
           <span class="sb-icon">📋</span> All Assets
         </a>
         <?php if (is_it_admin()): ?>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/add') ?>" href="/g2forms/assets/add.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/add') ?>" href="/assets/add.php">
           <span class="sb-icon">➕</span> Add Asset
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/import') ?>" href="/g2forms/assets/import.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/import') ?>" href="/assets/import.php">
           <span class="sb-icon">⬆</span> Bulk Import
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/transfer') ?>" href="/g2forms/assets/transfer.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/transfer') ?>" href="/assets/transfer.php">
           <span class="sb-icon">↔</span> Transfers
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/disposal') ?>" href="/g2forms/assets/disposal.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/disposal') ?>" href="/assets/disposal.php">
           <span class="sb-icon">🗑</span> Disposal
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/qr-labels') ?>" href="/g2forms/assets/qr-labels.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/qr-labels') ?>" href="/assets/qr-labels.php">
           <span class="sb-icon">🔲</span> QR Labels
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/lookups') ?>" href="/g2forms/assets/lookups.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/lookups') ?>" href="/assets/lookups.php">
           <span class="sb-icon">🏷️</span> Categories / Locations
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/settings') ?>" href="/g2forms/assets/settings.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/settings') ?>" href="/assets/settings.php">
           <span class="sb-icon">⚙</span> Asset Settings
         </a>
         <?php endif; ?>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/depreciation') ?>" href="/g2forms/assets/depreciation.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/depreciation') ?>" href="/assets/depreciation.php">
           <span class="sb-icon">📉</span> Depreciation
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/report') ?>" href="/g2forms/assets/report.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/report') ?>" href="/assets/report.php">
           <span class="sb-icon">📊</span> Report
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/assets/audit-log') ?>" href="/g2forms/assets/audit-log.php">
+        <a class="sb-item<?= _sb_act('/g2forms/assets/audit-log') ?>" href="/assets/audit-log.php">
           <span class="sb-icon">📜</span> Audit Log
         </a>
       </div>
@@ -179,15 +179,15 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
       </button>
       <div class="sb-group-body">
         <?php if (is_finance_admin()): ?>
-        <a class="sb-item<?= _sb_act('/g2forms/admin/submissions') ?>" href="/g2forms/admin/submissions.php">
+        <a class="sb-item<?= _sb_act('/g2forms/admin/submissions') ?>" href="/admin/submissions.php">
           <span class="sb-icon">◈</span> All Submissions
         </a>
-        <a class="sb-item<?= _sb_act('/g2forms/admin/users') ?>" href="/g2forms/admin/users/">
+        <a class="sb-item<?= _sb_act('/g2forms/admin/users') ?>" href="/admin/users/">
           <span class="sb-icon">👥</span> Users
         </a>
         <?php endif; ?>
         <?php if (is_superadmin()): ?>
-        <a class="sb-item<?= _sb_act('/g2forms/admin/settings') ?>" href="/g2forms/admin/settings.php">
+        <a class="sb-item<?= _sb_act('/g2forms/admin/settings') ?>" href="/admin/settings.php">
           <span class="sb-icon">⚙</span> Settings
         </a>
         <?php endif; ?>
@@ -203,7 +203,7 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
       <div class="sb-name"><?= htmlspecialchars($_u['name'] ?? '') ?></div>
       <div class="sb-role"><?= ROLES[$_u['role'] ?? 'user'] ?? 'User' ?></div>
     </div>
-    <a class="sb-logout" href="/g2forms/logout.php" title="Sign out">⏻</a>
+    <a class="sb-logout" href="/logout.php" title="Sign out">⏻</a>
   </div>
 </aside>
 <script>

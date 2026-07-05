@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../lib/bootstrap.php';
 
 $pendingId = $_SESSION['sm_pending_staff_id'] ?? null;
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <title>Verify Code — G2 SM Calendar Tool</title>
-<link rel="stylesheet" href="/g2forms/sm-calendar/sm.css">
+<link rel="stylesheet" href="/sm-calendar/sm.css">
 </head>
 <body class="sm-auth-bg">
 <div class="sm-auth-card">
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit" class="sm-btn-primary">Verify &amp; Continue</button>
   </form>
 
-  <a class="sm-auth-alt" href="/g2forms/sm-calendar/staff-auth/login.php">← Back to login</a>
+  <a class="sm-auth-alt" href="/sm-calendar/staff-auth/login.php">← Back to login</a>
 </div>
 </body>
 </html>

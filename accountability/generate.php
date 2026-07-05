@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -166,5 +166,5 @@ $stmt = db()->prepare("INSERT INTO form_submissions (user_id, form_type, form_da
 $stmt->execute([$uid, 'accountability', $form_data, $filename]);
 $sub_id = db()->lastInsertId();
 
-header('Location: /g2forms/download.php?id=' . $sub_id);
+header('Location: /download.php?id=' . $sub_id);
 exit;

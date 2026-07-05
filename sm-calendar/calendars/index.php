@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../lib/bootstrap.php';
 sm_require_staff();
 $staff = sm_current_staff();
@@ -79,7 +79,7 @@ $status_colors = ['Draft'=>'#9ca3af','Brief Sent'=>'#2563eb','Artwork Pending'=>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calendars — G2 SM Calendar Tool</title>
-<link rel="stylesheet" href="/g2forms/sm-calendar/sm.css">
+<link rel="stylesheet" href="/sm-calendar/sm.css">
 <style>
   .panel { background:#fff; border:1px solid #e8eaee; border-radius:14px; padding:22px; margin-bottom:24px; }
   .panel h2 { font-size:13px; font-weight:800; margin:0 0 16px; }

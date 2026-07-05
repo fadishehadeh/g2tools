@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // PUBLIC — no login required
 if (session_status() === PHP_SESSION_NONE) session_start();
 ?><!DOCTYPE html>
@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registration Submitted — Grey Doha</title>
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   body { background: #f6f7f9; min-height: 100vh; display: flex; flex-direction: column;
          align-items: center; justify-content: center; padding: 40px 16px; }
@@ -28,7 +28,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 <body>
 <div class="ty-card">
   <div class="ty-logo">
-    <img src="/g2forms/grey.jpeg" style="height:36px;object-fit:contain;max-width:140px">
+    <img src="/grey.jpeg" style="height:36px;object-fit:contain;max-width:140px">
   </div>
   <div class="ty-icon">✓</div>
   <div class="ty-title">Registration Submitted!</div>

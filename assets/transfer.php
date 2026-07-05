@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -78,8 +78,8 @@ $users_list  = db()->query("SELECT id,name FROM users WHERE is_active=1 ORDER BY
 <head>
 <meta charset="UTF-8">
 <title>Asset Transfer — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
 .pw{padding:28px 36px 60px;max-width:1040px}
 .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}

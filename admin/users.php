@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
-if (!is_it_admin()) { header('Location: /g2forms/'); exit; }
+if (!is_it_admin()) { header('Location: /'); exit; }
 
 $user  = current_user();
 $error = $success = '';
@@ -73,7 +73,7 @@ $role_labels  = ['user' => 'User', 'finance_admin' => 'Finance Admin', 'it_admin
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Users — G2 Admin</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; }
 

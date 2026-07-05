@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require_admin();
@@ -19,8 +19,8 @@ $logs = $stmt->fetchAll();
 <head>
 <meta charset="UTF-8">
 <title>Float Log — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   .log-wrap { padding:28px 40px 80px; max-width:900px; }
   .office-tabs { display:flex; gap:8px; margin-bottom:24px; }

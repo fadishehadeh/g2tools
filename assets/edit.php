@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
-if (!is_it_admin()) { header('Location: /g2forms/assets/'); exit; }
+if (!is_it_admin()) { header('Location: /assets/'); exit; }
 
 $id = (int)($_GET['id'] ?? 0);
 $a  = db()->prepare("SELECT * FROM assets WHERE id=?");
@@ -45,8 +45,8 @@ $a = array_merge($a, array_intersect_key($_POST, $a));
 <head>
 <meta charset="UTF-8">
 <title>Edit Asset — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>.form-card{max-width:700px}</style>
 </head>
 <body>

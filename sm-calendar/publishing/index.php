@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../lib/bootstrap.php';
 sm_require_staff();
 ?><!DOCTYPE html>
@@ -6,7 +6,7 @@ sm_require_staff();
 <head>
 <meta charset="UTF-8">
 <title>Publishing — G2 SM Calendar Tool</title>
-<link rel="stylesheet" href="/g2forms/sm-calendar/sm.css">
+<link rel="stylesheet" href="/sm-calendar/sm.css">
 </head>
 <body>
 <div class="sm-shell">

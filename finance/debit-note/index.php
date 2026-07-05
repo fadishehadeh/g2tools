@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require_login();
@@ -8,8 +8,8 @@ require_login();
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Debit Note — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   .items-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
   .items-table th { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase;
@@ -44,14 +44,14 @@ require_login();
 <?php require '../../_sidebar.php'; ?>
 <div class="main-content">
 <div class="topbar">
-  <a class="topbar-back" href="/g2forms/">G2 Tools</a>
+  <a class="topbar-back" href="/">G2 Tools</a>
   <span class="topbar-title">Debit Note</span>
 </div>
 <div class="form-page-wrap">
 <div class="form-card">
 
   <div class="form-header">
-    <div class="fh-logo"><img id="headerLogo" src="/g2forms/grey.jpeg" style="height:38px;display:block;object-fit:contain;max-width:140px"></div>
+    <div class="fh-logo"><img id="headerLogo" src="/grey.jpeg" style="height:38px;display:block;object-fit:contain;max-width:140px"></div>
     <div class="fh-divider"></div>
     <div class="fh-text">
       <h1>Debit Note</h1>
@@ -69,7 +69,7 @@ require_login();
         <option value="pn" data-logo="/g2forms/PN.gif">PIN and Notch</option>
         <option value="grey" data-logo="/g2forms/grey.jpeg" selected>Grey</option>
       </select>
-      <img id="companyLogoPreview" src="/g2forms/grey.jpeg" style="height:28px;object-fit:contain">
+      <img id="companyLogoPreview" src="/grey.jpeg" style="height:28px;object-fit:contain">
     </div>
   </div>
 

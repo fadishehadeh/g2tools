@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require_admin();
@@ -39,8 +39,8 @@ $categories = array_unique(array_column($items, 'category'));
 <head>
 <meta charset="UTF-8">
 <title>Pantry Items — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   .items-wrap { padding:32px 40px 80px; max-width:900px; }
   .items-table { width:100%; border-collapse:collapse; background:#fff; border:1px solid #e8eaee;

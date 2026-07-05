@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../lib/bootstrap.php';
 require_once __DIR__ . '/../lib/workflow.php';
 sm_require_staff();
@@ -64,7 +64,7 @@ if ($calendar_id) { foreach ($calendars as $c) if ((int)$c['id']===$calendar_id)
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Posts — G2 SM Calendar Tool</title>
-<link rel="stylesheet" href="/g2forms/sm-calendar/sm.css">
+<link rel="stylesheet" href="/sm-calendar/sm.css">
 <style>
   .panel { background:#fff; border:1px solid #e8eaee; border-radius:14px; padding:20px 22px; margin-bottom:20px; }
   .fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; align-items:end; }

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require 'config.php';
 require 'mailer.php';
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <title>Forgot Password — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/form.css">
 <style>
 body{background:#f2f3f6;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
 .login-card{background:#fff;border-radius:14px;padding:40px;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
@@ -74,7 +74,7 @@ body{background:#f2f3f6;display:flex;align-items:center;justify-content:center;m
     </div>
     <button type="submit" class="btn-full">Send Reset Link</button>
   </form>
-  <div class="back"><a href="/g2forms/login.php">← Back to Login</a></div>
+  <div class="back"><a href="/login.php">← Back to Login</a></div>
 </div>
 </body>
 </html>

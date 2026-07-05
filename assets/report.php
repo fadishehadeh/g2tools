@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -60,7 +60,7 @@ $total_val=array_sum(array_column($assets,'purchase_value'));
 <head>
 <meta charset="UTF-8">
 <title>Asset Report — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
 *,*::before,*::after{box-sizing:border-box}
 .pw{padding:30px 36px 60px}

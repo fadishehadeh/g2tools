@@ -1,5 +1,5 @@
-<?php
+﻿<?php
 session_start();
 session_destroy();
-header('Location: /g2forms/login.php');
+header('Location: /login.php');
 exit;

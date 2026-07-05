@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require_login();
-if (!is_finance_admin()) { header('Location: /g2forms/'); exit; }
+if (!is_finance_admin()) { header('Location: /'); exit; }
 
 $id = (int)($_POST['id'] ?? 0);
 if (!$id) { header('Location: index.php'); exit; }

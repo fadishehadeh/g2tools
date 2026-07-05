@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Run once at: http://localhost/g2forms/setup.php
 // Creates the database, tables, and default admin accounts.
 define('DB_HOST', 'localhost');
@@ -87,7 +87,7 @@ try {
     <p><b>Finance Admin:</b> finance@g2group.com / Finance@123</p>
     <p style="margin-top:8px;color:#999;font-size:12px">Change these passwords after first login.</p>
   </div>
-  <a class="btn" href="/g2forms/login.php">Go to Login →</a>
+  <a class="btn" href="/login.php">Go to Login →</a>
   <?php endif; ?>
 </div>
 </body>

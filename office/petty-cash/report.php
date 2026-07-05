@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../../config.php';
 require_login();
@@ -302,7 +302,7 @@ $status_colors = ['pending'=>['#fffbeb','#d97706'],'approved'=>['#f0fdf4','#16a3
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Petty Cash Report — <?= htmlspecialchars($o['label']) ?></title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
 *,*::before,*::after{box-sizing:border-box}
 .pw{padding:30px 36px 60px}

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../lib/bootstrap.php';
 require_once __DIR__ . '/../lib/workflow.php';
 sm_require_staff();
@@ -159,7 +159,7 @@ $formats   = ['Image','Video','Carousel','Reel','Story'];
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= htmlspecialchars($post['title']) ?> — G2 SM Calendar Tool</title>
-<link rel="stylesheet" href="/g2forms/sm-calendar/sm.css">
+<link rel="stylesheet" href="/sm-calendar/sm.css">
 <style>
   .pd-wrap { display:grid; grid-template-columns: 1fr 360px; gap:20px; align-items:start; }
   .panel { background:#fff; border:1px solid #e8eaee; border-radius:14px; padding:22px; margin-bottom:18px; }

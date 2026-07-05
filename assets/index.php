@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -52,7 +52,7 @@ $attention = db()->query("SELECT a.*, c.icon cat_icon
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Assets — G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -109,7 +109,7 @@ $attention = db()->query("SELECT a.*, c.icon cat_icon
 <?php require '../_sidebar.php'; ?>
 <div class="main-content">
 <div class="topbar">
-  <a class="topbar-back" href="/g2forms/">G2 Tools</a>
+  <a class="topbar-back" href="/">G2 Tools</a>
   <span class="topbar-title">Asset Management</span>
 </div>
 <div class="pw">

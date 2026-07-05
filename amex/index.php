@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -14,8 +14,8 @@ $companies = [
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Credit Card Authorization — G2</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
-<link rel="stylesheet" href="/g2forms/form.css">
+<link rel="stylesheet" href="/sidebar.css">
+<link rel="stylesheet" href="/form.css">
 <style>
   .company-bar {
     background: #f8f9fb;
@@ -67,7 +67,7 @@ $companies = [
 
 <div class="main-content">
 <div class="topbar">
-  <a class="topbar-back" href="/g2forms/">Forms</a>
+  <a class="topbar-back" href="/">Forms</a>
   <span class="topbar-title">Credit Card Authorization</span>
 </div>
 <div class="form-page-wrap">
@@ -75,7 +75,7 @@ $companies = [
 
   <div class="form-header">
     <div class="fh-logo">
-      <img id="headerLogo" src="/g2forms/logo.png" style="height:38px;display:block;object-fit:contain;max-width:160px">
+      <img id="headerLogo" src="/logo.png" style="height:38px;display:block;object-fit:contain;max-width:160px">
     </div>
     <div class="fh-divider"></div>
     <div class="fh-text">
@@ -95,7 +95,7 @@ $companies = [
           <option value="<?= $key ?>" data-logo="<?= $co['logo'] ?>"><?= htmlspecialchars($co['name']) ?></option>
         <?php endforeach; ?>
       </select>
-      <img id="companyLogoPreview" src="/g2forms/logo.png" alt="company logo">
+      <img id="companyLogoPreview" src="/logo.png" alt="company logo">
     </div>
   </div>
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../lib/bootstrap.php';
 
 if (sm_current_staff()) { header('Location: ' . SM_BASE_URL . '/'); exit; }
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Staff Login — G2 SM Calendar Tool</title>
-<link rel="stylesheet" href="/g2forms/sm-calendar/sm.css">
+<link rel="stylesheet" href="/sm-calendar/sm.css">
 </head>
 <body class="sm-auth-bg">
 <div class="sm-auth-card">
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit" class="sm-btn-primary">Continue</button>
   </form>
 
-  <a class="sm-auth-alt" href="/g2forms/sm-calendar/client-auth/login.php">Client? Sign in to the review portal →</a>
+  <a class="sm-auth-alt" href="/sm-calendar/client-auth/login.php">Client? Sign in to the review portal →</a>
 </div>
 </body>
 </html>

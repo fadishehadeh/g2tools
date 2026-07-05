@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require 'config.php';
 require_login();
@@ -15,7 +15,7 @@ if (can('assets')) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>G2 Tools</title>
-<link rel="stylesheet" href="/g2forms/sidebar.css">
+<link rel="stylesheet" href="/sidebar.css">
 <style>
 * { box-sizing: border-box; }
 
@@ -192,7 +192,7 @@ if (can('assets')) {
     </div>
     <div class="cards-grid">
 
-      <a class="card card-finance" href="/g2forms/amex/">
+      <a class="card card-finance" href="/amex/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#FF3D33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
@@ -206,7 +206,7 @@ if (can('assets')) {
         </div>
       </a>
 
-      <a class="card card-hr" href="/g2forms/accountability/">
+      <a class="card card-hr" href="/accountability/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
@@ -221,7 +221,7 @@ if (can('assets')) {
         </div>
       </a>
 
-      <a class="card card-finance" href="/g2forms/finance/debit-note/">
+      <a class="card card-finance" href="/finance/debit-note/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#FF3D33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -237,7 +237,7 @@ if (can('assets')) {
         </div>
       </a>
 
-      <a class="card card-finance" href="/g2forms/finance/credit-note/">
+      <a class="card card-finance" href="/finance/credit-note/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#FF3D33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -252,7 +252,7 @@ if (can('assets')) {
         </div>
       </a>
 
-      <a class="card card-finance" href="/g2forms/finance/vendor-recon/">
+      <a class="card card-finance" href="/finance/vendor-recon/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#FF3D33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
@@ -278,7 +278,7 @@ if (can('assets')) {
     </div>
     <div class="cards-grid">
 
-      <a class="card card-office" href="/g2forms/office/petty-cash/?office=doha">
+      <a class="card card-office" href="/office/petty-cash/?office=doha">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
@@ -293,7 +293,7 @@ if (can('assets')) {
         </div>
       </a>
 
-      <a class="card" style="--card-color:#7c3aed;--icon-bg:#f5f3ff;--tag-bg:#f5f3ff;--tag-color:#7c3aed" href="/g2forms/office/petty-cash/?office=beirut">
+      <a class="card" style="--card-color:#7c3aed;--icon-bg:#f5f3ff;--tag-bg:#f5f3ff;--tag-color:#7c3aed" href="/office/petty-cash/?office=beirut">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
@@ -308,7 +308,7 @@ if (can('assets')) {
         </div>
       </a>
 
-      <a class="card card-pantry" href="/g2forms/office/pantry/">
+      <a class="card card-pantry" href="/office/pantry/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 11l19-9-9 19-2-8-8-2z"/>
@@ -334,7 +334,7 @@ if (can('assets')) {
     </div>
     <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px,1fr))">
 
-      <a class="card card-assets" href="/g2forms/assets/">
+      <a class="card card-assets" href="/assets/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -375,7 +375,7 @@ if (can('assets')) {
     </div>
     <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px,1fr))">
 
-      <a class="card card-vendor" href="/g2forms/vendor/" target="_blank">
+      <a class="card card-vendor" href="/vendor/" target="_blank">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -395,7 +395,7 @@ if (can('assets')) {
 
   <div class="home-footer">
     <div style="display:flex;align-items:center;gap:10px">
-      <img src="/g2forms/logo.png" alt="G2">
+      <img src="/logo.png" alt="G2">
       <span>G2 Tools — Internal Use Only</span>
     </div>
     <span>Logged in as <strong style="color:#555"><?= htmlspecialchars($user['name']) ?></strong></span>

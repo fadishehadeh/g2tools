@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../lib/bootstrap.php';
 sm_require_admin();
 $staff = sm_current_staff();
@@ -42,7 +42,7 @@ $rows = sm_db()->query(
 <head>
 <meta charset="UTF-8">
 <title>Access Control — G2 SM Calendar Tool</title>
-<link rel="stylesheet" href="/g2forms/sm-calendar/sm.css">
+<link rel="stylesheet" href="/sm-calendar/sm.css">
 <style>
   .ac-table { width:100%; border-collapse:collapse; background:#fff; border:1px solid #e8eaee; border-radius:14px; overflow:hidden; }
   .ac-table th { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#aaa;
