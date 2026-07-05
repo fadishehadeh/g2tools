@@ -1,10 +1,15 @@
 <?php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'g2forms');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Local overrides (not in git) — created on live server with correct DB/URL
+if (file_exists(__DIR__ . '/config.local.php')) {
+    require __DIR__ . '/config.local.php';
+}
+
+if (!defined('DB_HOST'))   define('DB_HOST',   'localhost');
+if (!defined('DB_NAME'))   define('DB_NAME',   'g2forms');
+if (!defined('DB_USER'))   define('DB_USER',   'root');
+if (!defined('DB_PASS'))   define('DB_PASS',   '');
+if (!defined('BASE_URL'))  define('BASE_URL',  '/g2forms');
 define('STORAGE_PATH', __DIR__ . '/storage/pdfs/');
-define('BASE_URL', '/g2forms');
 define('OCR_SPACE_API_KEY', 'K81733201488957');
 
 function db(): PDO {

@@ -6,3 +6,4 @@ storage/pdfs/logo_tmp_*.png
 *.log
 .env
 config.local.php
+
