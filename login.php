@@ -11,8 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $pass  = $_POST['password'] ?? '';
     if ($email && $pass) {
-        $stmt = db()->prepare("SELECT * FROM users WHERE email = ? OR username = ?");
-        $stmt->execute([$email, $email]);
+        $cols = array_keys(db()->query("DESCRIBE users")->fetchAll(PDO::FETCH_UNIQUE));
+        $sql  = in_array('username', $cols)
+            ? "SELECT * FROM users WHERE email = ? OR username = ?"
+            : "SELECT * FROM users WHERE email = ?";
+        $stmt = db()->prepare($sql);
+        $stmt->execute(in_array('username', $cols) ? [$email, $email] : [$email]);
         $user = $stmt->fetch();
         $pw_field = isset($user['password_hash']) ? 'password_hash' : 'password';
         if ($user && password_verify($pass, $user[$pw_field])) {
