@@ -16,7 +16,6 @@ $MODULES = [
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name     = trim(strip_tags($_POST['name'] ?? ''));
     $email    = trim($_POST['email'] ?? '');
-    $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     $role     = $_POST['role'] ?? 'user';
     $office   = $_POST['office'] ?? '';
@@ -27,26 +26,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!array_key_exists($role, ROLES)) $role = 'user';
     if (!array_key_exists($office, OFFICES) && $office !== '') $office = '';
 
-    if (!$name || !$username || !$password) {
-        $error = 'Name, username and password are required.';
+    if (!$name || !$email || !$password) {
+        $error = 'Name, email and password are required.';
     } elseif (strlen($password) < 6) {
         $error = 'Password must be at least 6 characters.';
     } else {
-        $exists = db()->prepare("SELECT id FROM users WHERE username=?");
-        $exists->execute([$username]);
+        $exists = db()->prepare("SELECT id FROM users WHERE email=?");
+        $exists->execute([$email]);
         if ($exists->fetchColumn()) {
-            $error = "Username '$username' is already taken.";
+            $error = "Email '$email' is already registered.";
         } else {
             $hash    = password_hash($password, PASSWORD_BCRYPT);
             $mods    = ($role === 'user') ? json_encode(array_values(array_filter($modules))) : null;
-            db()->prepare("INSERT INTO users (name,email,username,password,role,office,access_modules,is_active) VALUES (?,?,?,?,?,?,?,1)")
-               ->execute([$name, $email, $username, $hash, $role, $office ?: null, $mods]);
+            // Support both schema versions (with or without username column)
+            $cols = array_column(db()->query("DESCRIBE users")->fetchAll(), 'Field');
+            if (in_array('username', $cols)) {
+                db()->prepare("INSERT INTO users (name,email,username,password_hash,role,office,access_modules,is_active) VALUES (?,?,?,?,?,?,?,1)")
+                   ->execute([$name, $email, explode('@',$email)[0], $hash, $role, $office ?: null, $mods]);
+            } else {
+                db()->prepare("INSERT INTO users (name,email,password_hash,role,office,access_modules,is_active) VALUES (?,?,?,?,?,?,1)")
+                   ->execute([$name, $email, $hash, $role, $office ?: null, $mods]);
+            }
             if ($email) {
                 $body = mail_template('Welcome to G2 Tools', "
                 <p>Hi <strong>".htmlspecialchars($name)."</strong>,</p>
                 <p>Your G2 Tools account has been created. Here are your login details:</p>
                 <div class='info-box'><strong>Login URL</strong> https://g2tools.greydoha.com/login.php</div>
-                <div class='info-box'><strong>Username</strong> ".htmlspecialchars($username)."</div>
+                <div class='info-box'><strong>Email</strong> ".htmlspecialchars($email)."</div>
                 <div class='info-box'><strong>Password</strong> ".htmlspecialchars($password)."</div>
                 <p>Please change your password after your first login.</p>
                 <a class='btn' href='https://g2tools.greydoha.com/login.php'>Log In Now</a>");
@@ -103,19 +109,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <input type="text" name="name" required value="<?= htmlspecialchars($_POST['name']??'') ?>">
         </div>
         <div class="field">
-          <label class="field-label">Email</label>
-          <input type="email" name="email" value="<?= htmlspecialchars($_POST['email']??'') ?>">
+          <label class="field-label">Email <span style="color:#FF3D33">*</span></label>
+          <input type="email" name="email" required value="<?= htmlspecialchars($_POST['email']??'') ?>">
         </div>
       </div>
-      <div class="grid2">
-        <div class="field">
-          <label class="field-label">Username <span style="color:#FF3D33">*</span></label>
-          <input type="text" name="username" required autocomplete="off" value="<?= htmlspecialchars($_POST['username']??'') ?>">
-        </div>
-        <div class="field">
-          <label class="field-label">Password <span style="color:#FF3D33">*</span></label>
-          <input type="password" name="password" required autocomplete="new-password" minlength="6">
-        </div>
+      <div class="field" style="max-width:280px">
+        <label class="field-label">Password <span style="color:#FF3D33">*</span></label>
+        <input type="password" name="password" required autocomplete="new-password" minlength="6">
       </div>
     </div>
 
