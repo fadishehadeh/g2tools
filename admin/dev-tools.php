@@ -247,7 +247,72 @@ if ($_POST['action'] ?? '' === 'seed') {
         $cnt++;
     }
 
-    $msg = "Seeded $cnt mockup records successfully — form submissions, and petty cash requests for Doha & Beirut.";
+    // Assets — seed lookup tables first, then assets
+    $db->exec('SET FOREIGN_KEY_CHECKS=0');
+
+    // Categories (ignore duplicates)
+    $cats = ['💻 IT Equipment'=>'💻','🖨 Printers & Peripherals'=>'🖨','📱 Mobile Devices'=>'📱','🪑 Furniture'=>'🪑','🚗 Vehicles'=>'🚗','📷 AV Equipment'=>'📷'];
+    $cat_ids = [];
+    foreach ($cats as $name => $icon) {
+        $n = trim(substr($name, 3));
+        $existing = $db->prepare("SELECT id FROM asset_categories WHERE name=?"); $existing->execute([$n]);
+        $id = $existing->fetchColumn();
+        if (!$id) { $db->prepare("INSERT INTO asset_categories (name,icon) VALUES (?,?)")->execute([$n,$icon]); $id = $db->lastInsertId(); }
+        $cat_ids[$n] = $id;
+    }
+
+    // Locations
+    $locs = [['Doha HQ — Floor 3','doha'],['Doha HQ — Floor 4','doha'],['Beirut Office','beirut'],['Storage Room','doha']];
+    $loc_ids = [];
+    foreach ($locs as [$name, $office]) {
+        $existing = $db->prepare("SELECT id FROM asset_locations WHERE name=?"); $existing->execute([$name]);
+        $id = $existing->fetchColumn();
+        if (!$id) { $db->prepare("INSERT INTO asset_locations (name,office) VALUES (?,?)")->execute([$name,$office]); $id = $db->lastInsertId(); }
+        $loc_ids[$name] = $id;
+    }
+
+    // Departments
+    $depts = ['Creative','Technology','Finance','Client Services','Management'];
+    $dept_ids = [];
+    foreach ($depts as $name) {
+        $existing = $db->prepare("SELECT id FROM asset_departments WHERE name=?"); $existing->execute([$name]);
+        $id = $existing->fetchColumn();
+        if (!$id) { $db->prepare("INSERT INTO asset_departments (name) VALUES (?)")->execute([$name]); $id = $db->lastInsertId(); }
+        $dept_ids[$name] = $id;
+    }
+
+    $db->exec('SET FOREIGN_KEY_CHECKS=1');
+
+    $asset_rows = [
+        ['G2-IT-001','MacBook Pro 14" M4','IT Equipment','Doha HQ — Floor 3','Creative','FVFXQ2ABCD','Apple','MacBook Pro 14"','2025-01-15',12500.00,'2027-01-14','active','Assigned to Ahmad Nasser'],
+        ['G2-IT-002','MacBook Pro 14" M4','IT Equipment','Doha HQ — Floor 4','Technology','FVFXQ2ABCE','Apple','MacBook Pro 14"','2025-01-15',12500.00,'2027-01-14','active','Assigned to Fadi Shehadeh'],
+        ['G2-IT-003','Dell XPS 15','IT Equipment','Doha HQ — Floor 3','Finance','SN-XPS15-009','Dell','XPS 15 9530','2024-06-01',9800.00,'2026-05-31','active','Finance team workstation'],
+        ['G2-IT-004','HP LaserJet Pro','Printers & Peripherals','Doha HQ — Floor 3','Creative','CNBKG12345','HP','LaserJet Pro M404dn','2023-03-10',2200.00,'2025-03-09','active','Main print room'],
+        ['G2-MOB-001','iPhone 16 Pro','Mobile Devices','Doha HQ — Floor 4','Client Services','F2LN8WXYZ1','Apple','iPhone 16 Pro 256GB','2024-10-01',5500.00,'2026-09-30','active','Assigned to Lara Hassan'],
+        ['G2-MOB-002','iPhone 15','Mobile Devices','Beirut Office','Client Services','F2LN8WXYB2','Apple','iPhone 15 128GB','2023-11-01',4200.00,'2025-10-31','active','Beirut team device'],
+        ['G2-MOB-003','Samsung Galaxy S24','Mobile Devices','Doha HQ — Floor 3','Management','RF8N30ABCD','Samsung','Galaxy S24 Ultra','2024-02-15',4800.00,'2026-02-14','active',''],
+        ['G2-AV-001','Sony A7 IV Camera','AV Equipment','Doha HQ — Floor 3','Creative','5041234ABC','Sony','A7 IV','2024-05-01',18000.00,'2026-04-30','active','Studio production camera'],
+        ['G2-AV-002','DJI Mavic 3 Pro','AV Equipment','Storage Room','Creative','DJI2024PRO1','DJI','Mavic 3 Pro','2024-07-15',12000.00,'2026-07-14','active','Aerial photography'],
+        ['G2-FUR-001','Executive Desk Set','Furniture','Doha HQ — Floor 4','Management',null,'Jasper','Executive L-Desk','2022-01-01',8500.00,null,'active','MD Office'],
+        ['G2-IT-005','iPad Pro 12.9"','IT Equipment','Beirut Office','Management','DMPL2ABCDE','Apple','iPad Pro M4 12.9"','2024-09-01',6200.00,'2026-08-31','active',''],
+        ['G2-IT-006','Dell Monitor 27"','IT Equipment','Doha HQ — Floor 3','Technology','CN0A1B2C3D','Dell','UltraSharp U2723DE','2023-08-01',2800.00,'2025-07-31','active','Dual monitor setup'],
+        ['G2-IT-007','MacBook Air M3','IT Equipment','Beirut Office','Creative','FVFXQ2ZZZ1','Apple','MacBook Air 15" M3','2024-03-01',9200.00,'2026-02-28','active',''],
+        ['G2-VEH-001','Toyota Camry 2024','Vehicles','Doha HQ — Floor 3','Management','','Toyota','Camry XLE 2024','2024-01-10',145000.00,'2026-01-09','active','Company pool car #1'],
+        ['G2-IT-008','Logitech MX Keys','IT Equipment','Storage Room','Technology','LGT2024001','Logitech','MX Keys for Mac','2024-11-01',650.00,'2025-10-31','in_storage','Spare peripherals'],
+    ];
+
+    $ast = $db->prepare("INSERT INTO assets (tag,name,category_id,location_id,department_id,serial_number,brand,model,purchase_date,purchase_value,warranty_expiry,status,notes,depreciation_method,useful_life_years,salvage_value,created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,'straight_line',3,500,?)");
+    foreach ($asset_rows as [$tag,$name,$cat,$loc,$dept,$sn,$brand,$model,$pd,$val,$warr,$stat,$notes]) {
+        $cid = $cat_ids[$cat] ?? null;
+        $lid = $loc_ids[$loc] ?? null;
+        $did = $dept_ids[$dept] ?? null;
+        try {
+            $ast->execute([$tag,$name,$cid,$lid,$did,$sn,$brand,$model,$pd,$val,$warr,$stat,$notes,$uid]);
+            $cnt++;
+        } catch (\Exception $e) { /* skip duplicates */ }
+    }
+
+    $msg = "Seeded $cnt mockup records — form submissions, petty cash (Doha & Beirut), and " . count($asset_rows) . " assets with categories/locations/departments.";
 }
 
 // ── Action: Purge all data ────────────────────────────────────────────────────
