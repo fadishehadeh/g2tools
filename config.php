@@ -87,11 +87,24 @@ const MODULE_PERMS = [
  * Admins always pass. Regular users checked against access_modules JSON.
  * Backward compat: old broad 'finance' and 'petty_cash' keys still work.
  */
+function user_modules(): array {
+    static $cached = null;
+    if ($cached !== null) return $cached;
+    $u = current_user();
+    if (!$u) return $cached = [];
+    // Always re-fetch from DB so permission changes take effect without re-login
+    $r = db()->prepare("SELECT access_modules FROM users WHERE id=?");
+    $r->execute([$u['id']]);
+    $raw = $r->fetchColumn();
+    $_SESSION['g2_user']['access_modules'] = $raw;
+    return $cached = json_decode($raw ?? '[]', true) ?: [];
+}
+
 function can(string $perm): bool {
     $u = current_user();
     if (!$u) return false;
     if (is_admin()) return true;
-    $mods = json_decode($u['access_modules'] ?? '[]', true) ?: [];
+    $mods = user_modules();
     if (in_array($perm, $mods)) return true;
     // Backward compat: broad 'finance' covers all finance_* sub-keys
     if (str_starts_with($perm, 'finance_') && in_array('finance', $mods)) return true;
