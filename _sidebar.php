@@ -226,13 +226,7 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
 </aside>
 <script>
 function sbToggle(btn) {
-  const group = btn.closest('.sb-group');
-  const isOpen = group.classList.contains('open');
-  // Close all other groups (accordion)
-  document.querySelectorAll('.sb-group').forEach(g => {
-    if (g !== group) g.classList.remove('open');
-  });
-  group.classList.toggle('open', !isOpen);
+  btn.closest('.sb-group').classList.toggle('open');
 }
 document.querySelectorAll('.sb-group').forEach(g => {
   if (g.querySelector('.sb-item.active')) g.classList.add('has-active');
