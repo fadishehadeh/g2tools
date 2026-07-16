@@ -95,13 +95,13 @@ function form_serial(string $type, array $data): string {
           <tbody>
             <?php foreach ($submissions as $s):
               $data = json_decode($s['form_data'], true); ?>
-            <tr>
+            <tr style="cursor:pointer" onclick="location.href='/admin/submission-view.php?id=<?= $s['id'] ?>'">
               <td style="color:#ccc"><?= $s['id'] ?></td>
               <td><span class="badge <?= $s['form_type'] === 'amex' ? 'badge-amex' : 'badge-acc' ?>"><?= form_label($s['form_type']) ?></span></td>
               <td><?= form_summary($s['form_type'], $data) ?></td>
               <td><?= form_serial($s['form_type'], $data) ?></td>
               <td style="color:#888"><?= date('d M Y, H:i', strtotime($s['created_at'])) ?></td>
-              <td><a class="dl-btn" href="/download.php?id=<?= $s['id'] ?>">⬇ PDF</a></td>
+              <td onclick="event.stopPropagation()"><a class="dl-btn" href="/download.php?id=<?= $s['id'] ?>">⬇ PDF</a></td>
             </tr>
             <?php endforeach; ?>
           </tbody>

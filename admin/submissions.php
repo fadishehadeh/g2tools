@@ -388,7 +388,7 @@ if (($_GET['export'] ?? '') === 'pdf') {
           $data     = json_decode($s['form_data'], true);
           $initials = strtoupper(substr($s['user_name'], 0, 1));
         ?>
-        <tr>
+        <tr style="cursor:pointer" onclick="location.href='/admin/submission-view.php?id=<?= $s['id'] ?>'">
           <td style="color:#ccc"><?= $s['id'] ?></td>
           <td><?= form_badge($s['form_type']) ?></td>
           <td><?= htmlspecialchars(form_summary($s['form_type'], $data)) ?></td>
@@ -405,7 +405,7 @@ if (($_GET['export'] ?? '') === 'pdf') {
             </div>
           </td>
           <td style="color:#888;white-space:nowrap"><?= date('d M Y, H:i', strtotime($s['created_at'])) ?></td>
-          <td><a class="dl-btn" href="/download.php?id=<?= $s['id'] ?>">⬇ PDF</a></td>
+          <td onclick="event.stopPropagation()"><a class="dl-btn" href="/download.php?id=<?= $s['id'] ?>">⬇ PDF</a></td>
         </tr>
         <?php endforeach; ?>
       </tbody>
