@@ -150,169 +150,172 @@ if ($_POST['action'] ?? '' === 'gen_pdfs') {
 
 // ── Action: Seed mockup data ─────────────────────────────────────────────────
 if ($_POST['action'] ?? '' === 'seed') {
-    $uid = current_user()['id'];
-    $db  = db();
-    $now = date('Y-m-d H:i:s');
-    $cnt = 0;
+    $uid    = current_user()['id'];
+    $db     = db();
+    $errors = [];
+    $cnt    = 0;
 
-    // Finance form submissions (no PDF files — just DB records for history/reporting)
-    $amex_samples = [
-        ['G2 Group','amex', json_encode(['company'=>'G2 Group','merchant'=>'Adobe Creative Cloud','serial_number'=>'G2-00001','po_number'=>'PO-2026-0001','billable'=>'YES','client_name'=>'Ooredoo','currency'=>'USD','amount'=>'599.99','authorized_name'=>'Fadi Shehadeh','finance_approval'=>'Sara Al-Khatib','finance_date'=>'01/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'01/06/2026'])],
-        ['G2 Group','amex', json_encode(['company'=>'G2 Group','merchant'=>'AWS (Amazon Web Services)','serial_number'=>'G2-00002','po_number'=>'PO-2026-0002','billable'=>'NO','nature_of_expense'=>'Cloud hosting — internal servers','currency'=>'USD','amount'=>'1240.00','authorized_name'=>'Ahmad Nasser','finance_approval'=>'Sara Al-Khatib','finance_date'=>'05/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'05/06/2026'])],
-        ['Pin & Notch','amex', json_encode(['company'=>'Pin & Notch','merchant'=>'Canva Pro','serial_number'=>'PN-00001','po_number'=>'PO-2026-0003','billable'=>'NO','nature_of_expense'=>'Design subscriptions','currency'=>'USD','amount'=>'149.99','authorized_name'=>'Lara Hassan','finance_approval'=>'Sara Al-Khatib','finance_date'=>'10/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'10/06/2026'])],
-        ['Grey','amex', json_encode(['company'=>'Grey','merchant'=>'Marriott — Doha','serial_number'=>'Grey-00001','po_number'=>'PO-2026-0004','billable'=>'YES','client_name'=>'QNB Group','currency'=>'QAR','amount'=>'8500.00','authorized_name'=>'Karim Mansour','finance_approval'=>'Sara Al-Khatib','finance_date'=>'15/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'15/06/2026'])],
-        ['G2 Group','amex', json_encode(['company'=>'G2 Group','merchant'=>'Microsoft 365','serial_number'=>'G2-00003','po_number'=>'PO-2026-0005','billable'=>'NO','nature_of_expense'=>'Annual M365 subscription','currency'=>'USD','amount'=>'2400.00','authorized_name'=>'Fadi Shehadeh','finance_approval'=>'Sara Al-Khatib','finance_date'=>'20/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'20/06/2026'])],
-    ];
-    $stmt = $db->prepare("INSERT INTO form_submissions (user_id,form_type,form_data,pdf_filename,created_at) VALUES (?,?,?,NULL,?)");
-    foreach ($amex_samples as $i => [$co, $ft, $fd]) {
-        $stmt->execute([$uid, $ft, $fd, date('Y-m-d H:i:s', strtotime("-".($i*5)." days"))]);
-        $cnt++;
-    }
+    // Helper: safe execute — catches and records errors instead of crashing
+    $safe = function(string $label, callable $fn) use (&$errors, &$cnt) {
+        try { $result = $fn(); $cnt++; return $result; }
+        catch (\Throwable $e) { $errors[] = "$label: " . $e->getMessage(); return false; }
+    };
 
-    $acc_samples = [
-        json_encode(['company'=>'G2 Group','received_by'=>'Ahmad Nasser','position'=>'Senior Designer','department'=>'Creative','item_name'=>'MacBook Pro 14" M4','serial_number'=>'FVFXQ2ABCD','received_date'=>'01/06/2026','estimated_life'=>'3 Years','request_by'=>'Fadi Shehadeh']),
-        json_encode(['company'=>'G2 Group','received_by'=>'Lara Hassan','position'=>'Account Manager','department'=>'Client Services','item_name'=>'iPhone 16 Pro','serial_number'=>'F2LN8WXYZ','received_date'=>'10/06/2026','estimated_life'=>'2 Years','request_by'=>'Fadi Shehadeh']),
-        json_encode(['company'=>'Grey','received_by'=>'Karim Mansour','position'=>'Creative Director','department'=>'Creative','item_name'=>'Sony A7 IV Camera','serial_number'=>'5041234','received_date'=>'15/06/2026','estimated_life'=>'4 Years','request_by'=>'Krikor Khajikian']),
-    ];
-    $stmt2 = $db->prepare("INSERT INTO form_submissions (user_id,form_type,form_data,pdf_filename,created_at) VALUES (?,?,?,NULL,?)");
-    foreach ($acc_samples as $i => $fd) {
-        $stmt2->execute([$uid, 'accountability', $fd, date('Y-m-d H:i:s', strtotime("-".($i*7)." days"))]);
-        $cnt++;
-    }
+    // ── 1. form_submissions ──
+    // Detect column names to handle schema differences
+    $fs_cols = array_column($db->query("DESCRIBE form_submissions")->fetchAll(), 'Field');
+    $has_created_at = in_array('created_at', $fs_cols);
+    $fs_sql = $has_created_at
+        ? "INSERT INTO form_submissions (user_id,form_type,form_data,pdf_filename,created_at) VALUES (?,?,?,NULL,?)"
+        : "INSERT INTO form_submissions (user_id,form_type,form_data,pdf_filename) VALUES (?,?,?,NULL)";
 
-    $dn_samples = [
-        json_encode(['company'=>'G2 Group','to_name'=>'Al Mana Fashion Group','attention'=>'Finance','dn_date'=>'01/06/2026','currency'=>'QAR','items'=>[['desc'=>'Social Media Management','amt'=>15000],['desc'=>'Campaign Creative Production','amt'=>8500]],'total'=>'23500','prepared_by'=>'Cresencia Candava','approved_by'=>'Krikor Khajikian']),
-        json_encode(['company'=>'Grey','to_name'=>'Vodafone Qatar','attention'=>'Marketing','dn_date'=>'15/06/2026','currency'=>'QAR','items'=>[['desc'=>'PR Event Management — June','amt'=>35000]],'total'=>'35000','prepared_by'=>'Cresencia Candava','approved_by'=>'Krikor Khajikian']),
-    ];
-    $stmt3 = $db->prepare("INSERT INTO form_submissions (user_id,form_type,form_data,pdf_filename,created_at) VALUES (?,?,?,NULL,?)");
-    foreach ($dn_samples as $i => $fd) {
-        $stmt3->execute([$uid, 'debit_note', $fd, date('Y-m-d H:i:s', strtotime("-".($i*10)." days"))]);
-        $cnt++;
-    }
-
-    $cn_samples = [
-        json_encode(['company'=>'G2 Group','to_name'=>'Ooredoo Qatar','attention'=>'Accounts Payable','dn_date'=>'20/06/2026','currency'=>'QAR','items'=>[['desc'=>'Credit for overpayment — May 2026','amt'=>5000]],'total'=>'5000','prepared_by'=>'Cresencia Candava','approved_by'=>'Krikor Khajikian']),
-    ];
-    foreach ($cn_samples as $fd) {
-        $db->prepare("INSERT INTO form_submissions (user_id,form_type,form_data,pdf_filename,created_at) VALUES (?,?,?,NULL,?)")
-           ->execute([$uid, 'credit_note', $fd, date('Y-m-d H:i:s', strtotime('-3 days'))]);
-        $cnt++;
-    }
-
-    $vr_samples = [
-        json_encode(['company'=>'G2 Group','vendor_name'=>'PrintZone LLC','vendor_no'=>'V-00418','recon_date'=>'30/06/2026','currency'=>'QAR','grey_soa_balance'=>47250,'vendor_soa_balance'=>46900,'variance'=>350,'prepared_by'=>'Cresencia Candava','reviewed_by'=>'Fadi Shehadeh','approved_by'=>'Krikor Khajikian']),
-    ];
-    foreach ($vr_samples as $fd) {
-        $db->prepare("INSERT INTO form_submissions (user_id,form_type,form_data,pdf_filename,created_at) VALUES (?,?,?,NULL,?)")
-           ->execute([$uid, 'vendor_recon', $fd, date('Y-m-d H:i:s', strtotime('-1 day'))]);
-        $cnt++;
-    }
-
-    // Petty cash requests
-    $pc_doha_cats  = ['Transport','Meals & Entertainment','Office Supplies','Utilities','Maintenance'];
-    $pc_beirut_cats = ['Transport','Meals & Entertainment','Office Supplies','Communication','Other'];
-
-    $pc_doha = [
-        [45.00, 'Transport', 'Uber to client meeting — Lusail'],
-        [320.00, 'Meals & Entertainment', 'Team lunch — 8 pax'],
-        [85.50, 'Office Supplies', 'Printer ink cartridges x4'],
-        [150.00, 'Transport', 'Airport taxi for client pickup'],
-        [220.00, 'Meals & Entertainment', 'Dinner with client — Qatar National Bank'],
-        [45.00, 'Office Supplies', 'Whiteboard markers and notebooks'],
-        [500.00, 'Utilities', 'Parking permit — monthly renewal'],
-        [75.00, 'Maintenance', 'Coffee machine filter replacement'],
-        [180.00, 'Transport', 'Careem rides — weekly (3 trips)'],
-        [95.00, 'Meals & Entertainment', 'Catering for internal strategy session'],
-    ];
-    $pc_beirut = [
-        [35.00, 'Transport', 'Taxi to DHL for courier pickup'],
-        [85.00, 'Meals & Entertainment', 'Working lunch — new client onboarding'],
-        [42.50, 'Office Supplies', 'A4 paper ream x5'],
-        [60.00, 'Transport', 'Airport transfer — visiting GM'],
-        [120.00, 'Communication', 'Mobile top-up reimbursement — 4 staff'],
-        [25.00, 'Other', 'Bank charges — wire transfer fee'],
-        [55.00, 'Meals & Entertainment', 'Coffee meeting with supplier'],
-        [38.00, 'Office Supplies', 'Stapler, scissors, tape'],
+    $fs_data = [
+        ['amex', json_encode(['company'=>'G2 Group','merchant'=>'Adobe Creative Cloud','serial_number'=>'G2-00001','po_number'=>'PO-2026-0001','billable'=>'YES','client_name'=>'Ooredoo','currency'=>'USD','amount'=>'599.99','authorized_name'=>'Fadi Shehadeh','finance_approval'=>'Sara Al-Khatib','finance_date'=>'01/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'01/06/2026']), 0],
+        ['amex', json_encode(['company'=>'G2 Group','merchant'=>'AWS (Amazon Web Services)','serial_number'=>'G2-00002','po_number'=>'PO-2026-0002','billable'=>'NO','nature_of_expense'=>'Cloud hosting','currency'=>'USD','amount'=>'1240.00','authorized_name'=>'Ahmad Nasser','finance_approval'=>'Sara Al-Khatib','finance_date'=>'05/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'05/06/2026']), 5],
+        ['amex', json_encode(['company'=>'Pin & Notch','merchant'=>'Canva Pro','serial_number'=>'PN-00001','po_number'=>'PO-2026-0003','billable'=>'NO','nature_of_expense'=>'Design subscriptions','currency'=>'USD','amount'=>'149.99','authorized_name'=>'Lara Hassan','finance_approval'=>'Sara Al-Khatib','finance_date'=>'10/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'10/06/2026']), 10],
+        ['amex', json_encode(['company'=>'Grey','merchant'=>'Marriott Doha','serial_number'=>'Grey-00001','po_number'=>'PO-2026-0004','billable'=>'YES','client_name'=>'QNB Group','currency'=>'QAR','amount'=>'8500.00','authorized_name'=>'Karim Mansour','finance_approval'=>'Sara Al-Khatib','finance_date'=>'15/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'15/06/2026']), 15],
+        ['amex', json_encode(['company'=>'G2 Group','merchant'=>'Microsoft 365','serial_number'=>'G2-00003','po_number'=>'PO-2026-0005','billable'=>'NO','nature_of_expense'=>'Annual M365 subscription','currency'=>'USD','amount'=>'2400.00','authorized_name'=>'Fadi Shehadeh','finance_approval'=>'Sara Al-Khatib','finance_date'=>'20/06/2026','mgmt_approval'=>'Krikor Khajikian','mgmt_date'=>'20/06/2026']), 20],
+        ['accountability', json_encode(['company'=>'G2 Group','received_by'=>'Ahmad Nasser','position'=>'Senior Designer','department'=>'Creative','item_name'=>'MacBook Pro 14 M4','serial_number'=>'FVFXQ2ABCD','received_date'=>'01/06/2026','estimated_life'=>'3 Years','request_by'=>'Fadi Shehadeh']), 7],
+        ['accountability', json_encode(['company'=>'G2 Group','received_by'=>'Lara Hassan','position'=>'Account Manager','department'=>'Client Services','item_name'=>'iPhone 16 Pro','serial_number'=>'F2LN8WXYZ','received_date'=>'10/06/2026','estimated_life'=>'2 Years','request_by'=>'Fadi Shehadeh']), 14],
+        ['accountability', json_encode(['company'=>'Grey','received_by'=>'Karim Mansour','position'=>'Creative Director','department'=>'Creative','item_name'=>'Sony A7 IV Camera','serial_number'=>'5041234','received_date'=>'15/06/2026','estimated_life'=>'4 Years','request_by'=>'Krikor Khajikian']), 21],
+        ['debit_note', json_encode(['company'=>'G2 Group','to_name'=>'Al Mana Fashion Group','attention'=>'Finance','dn_date'=>'01/06/2026','currency'=>'QAR','total'=>'23500','prepared_by'=>'Cresencia Candava','approved_by'=>'Krikor Khajikian']), 10],
+        ['debit_note', json_encode(['company'=>'Grey','to_name'=>'Vodafone Qatar','attention'=>'Marketing','dn_date'=>'15/06/2026','currency'=>'QAR','total'=>'35000','prepared_by'=>'Cresencia Candava','approved_by'=>'Krikor Khajikian']), 20],
+        ['credit_note', json_encode(['company'=>'G2 Group','to_name'=>'Ooredoo Qatar','attention'=>'Accounts Payable','dn_date'=>'20/06/2026','currency'=>'QAR','total'=>'5000','prepared_by'=>'Cresencia Candava','approved_by'=>'Krikor Khajikian']), 3],
+        ['vendor_recon', json_encode(['company'=>'G2 Group','vendor_name'=>'PrintZone LLC','vendor_no'=>'V-00418','recon_date'=>'30/06/2026','currency'=>'QAR','grey_soa_balance'=>47250,'vendor_soa_balance'=>46900,'variance'=>350,'prepared_by'=>'Cresencia Candava','reviewed_by'=>'Fadi Shehadeh','approved_by'=>'Krikor Khajikian']), 1],
     ];
 
-    $pc_stmt = $db->prepare("INSERT INTO petty_cash_requests (user_id,office,amount,category,description,status,created_at) VALUES (?,?,?,?,?,?,?)");
-    $statuses = ['paid','paid','unpaid','paid','unpaid','paid','unpaid','paid','unpaid','paid'];
-    foreach ($pc_doha as $i => [$amt, $cat, $desc]) {
-        $pc_stmt->execute([$uid, 'doha', $amt, $cat, $desc, $statuses[$i] ?? 'unpaid', date('Y-m-d H:i:s', strtotime("-".($i*3)." days"))]);
-        $cnt++;
-    }
-    $statuses2 = ['paid','paid','unpaid','paid','paid','unpaid','paid','unpaid'];
-    foreach ($pc_beirut as $i => [$amt, $cat, $desc]) {
-        $pc_stmt->execute([$uid, 'beirut', $amt, $cat, $desc, $statuses2[$i] ?? 'unpaid', date('Y-m-d H:i:s', strtotime("-".($i*4)." days"))]);
-        $cnt++;
+    $fs_stmt = $db->prepare($fs_sql);
+    foreach ($fs_data as [$ft, $fd, $days_ago]) {
+        $safe("form_submissions[$ft]", function() use ($fs_stmt, $uid, $ft, $fd, $days_ago, $has_created_at) {
+            if ($has_created_at)
+                $fs_stmt->execute([$uid, $ft, $fd, date('Y-m-d H:i:s', strtotime("-{$days_ago} days"))]);
+            else
+                $fs_stmt->execute([$uid, $ft, $fd]);
+        });
     }
 
-    // Assets — seed lookup tables first, then assets
-    $db->exec('SET FOREIGN_KEY_CHECKS=0');
+    // ── 2. petty_cash_requests ──
+    $pc_cols = array_column($db->query("DESCRIBE petty_cash_requests")->fetchAll(), 'Field');
+    $pc_has_created = in_array('created_at', $pc_cols);
+    $pc_has_ocr     = in_array('ocr_amount', $pc_cols);
 
-    // Categories (ignore duplicates)
-    $cats = ['💻 IT Equipment'=>'💻','🖨 Printers & Peripherals'=>'🖨','📱 Mobile Devices'=>'📱','🪑 Furniture'=>'🪑','🚗 Vehicles'=>'🚗','📷 AV Equipment'=>'📷'];
-    $cat_ids = [];
-    foreach ($cats as $name => $icon) {
-        $n = trim(substr($name, 3));
-        $existing = $db->prepare("SELECT id FROM asset_categories WHERE name=?"); $existing->execute([$n]);
-        $id = $existing->fetchColumn();
-        if (!$id) { $db->prepare("INSERT INTO asset_categories (name,icon) VALUES (?,?)")->execute([$n,$icon]); $id = $db->lastInsertId(); }
-        $cat_ids[$n] = $id;
-    }
+    $pc_col_list = 'user_id,office,amount,category,description,status' . ($pc_has_ocr ? ',ocr_amount' : '') . ($pc_has_created ? ',created_at' : '');
+    $pc_placeholders = '?,?,?,?,?,?' . ($pc_has_ocr ? ',NULL' : '') . ($pc_has_created ? ',?' : '');
+    $pc_stmt = $db->prepare("INSERT INTO petty_cash_requests ($pc_col_list) VALUES ($pc_placeholders)");
 
-    // Locations
-    $locs = [['Doha HQ — Floor 3','doha'],['Doha HQ — Floor 4','doha'],['Beirut Office','beirut'],['Storage Room','doha']];
-    $loc_ids = [];
-    foreach ($locs as [$name, $office]) {
-        $existing = $db->prepare("SELECT id FROM asset_locations WHERE name=?"); $existing->execute([$name]);
-        $id = $existing->fetchColumn();
-        if (!$id) { $db->prepare("INSERT INTO asset_locations (name,office) VALUES (?,?)")->execute([$name,$office]); $id = $db->lastInsertId(); }
-        $loc_ids[$name] = $id;
-    }
-
-    // Departments
-    $depts = ['Creative','Technology','Finance','Client Services','Management'];
-    $dept_ids = [];
-    foreach ($depts as $name) {
-        $existing = $db->prepare("SELECT id FROM asset_departments WHERE name=?"); $existing->execute([$name]);
-        $id = $existing->fetchColumn();
-        if (!$id) { $db->prepare("INSERT INTO asset_departments (name) VALUES (?)")->execute([$name]); $id = $db->lastInsertId(); }
-        $dept_ids[$name] = $id;
-    }
-
-    $db->exec('SET FOREIGN_KEY_CHECKS=1');
-
-    $asset_rows = [
-        ['G2-IT-001','MacBook Pro 14" M4','IT Equipment','Doha HQ — Floor 3','Creative','FVFXQ2ABCD','Apple','MacBook Pro 14"','2025-01-15',12500.00,'2027-01-14','active','Assigned to Ahmad Nasser'],
-        ['G2-IT-002','MacBook Pro 14" M4','IT Equipment','Doha HQ — Floor 4','Technology','FVFXQ2ABCE','Apple','MacBook Pro 14"','2025-01-15',12500.00,'2027-01-14','active','Assigned to Fadi Shehadeh'],
-        ['G2-IT-003','Dell XPS 15','IT Equipment','Doha HQ — Floor 3','Finance','SN-XPS15-009','Dell','XPS 15 9530','2024-06-01',9800.00,'2026-05-31','active','Finance team workstation'],
-        ['G2-IT-004','HP LaserJet Pro','Printers & Peripherals','Doha HQ — Floor 3','Creative','CNBKG12345','HP','LaserJet Pro M404dn','2023-03-10',2200.00,'2025-03-09','active','Main print room'],
-        ['G2-MOB-001','iPhone 16 Pro','Mobile Devices','Doha HQ — Floor 4','Client Services','F2LN8WXYZ1','Apple','iPhone 16 Pro 256GB','2024-10-01',5500.00,'2026-09-30','active','Assigned to Lara Hassan'],
-        ['G2-MOB-002','iPhone 15','Mobile Devices','Beirut Office','Client Services','F2LN8WXYB2','Apple','iPhone 15 128GB','2023-11-01',4200.00,'2025-10-31','active','Beirut team device'],
-        ['G2-MOB-003','Samsung Galaxy S24','Mobile Devices','Doha HQ — Floor 3','Management','RF8N30ABCD','Samsung','Galaxy S24 Ultra','2024-02-15',4800.00,'2026-02-14','active',''],
-        ['G2-AV-001','Sony A7 IV Camera','AV Equipment','Doha HQ — Floor 3','Creative','5041234ABC','Sony','A7 IV','2024-05-01',18000.00,'2026-04-30','active','Studio production camera'],
-        ['G2-AV-002','DJI Mavic 3 Pro','AV Equipment','Storage Room','Creative','DJI2024PRO1','DJI','Mavic 3 Pro','2024-07-15',12000.00,'2026-07-14','active','Aerial photography'],
-        ['G2-FUR-001','Executive Desk Set','Furniture','Doha HQ — Floor 4','Management',null,'Jasper','Executive L-Desk','2022-01-01',8500.00,null,'active','MD Office'],
-        ['G2-IT-005','iPad Pro 12.9"','IT Equipment','Beirut Office','Management','DMPL2ABCDE','Apple','iPad Pro M4 12.9"','2024-09-01',6200.00,'2026-08-31','active',''],
-        ['G2-IT-006','Dell Monitor 27"','IT Equipment','Doha HQ — Floor 3','Technology','CN0A1B2C3D','Dell','UltraSharp U2723DE','2023-08-01',2800.00,'2025-07-31','active','Dual monitor setup'],
-        ['G2-IT-007','MacBook Air M3','IT Equipment','Beirut Office','Creative','FVFXQ2ZZZ1','Apple','MacBook Air 15" M3','2024-03-01',9200.00,'2026-02-28','active',''],
-        ['G2-VEH-001','Toyota Camry 2024','Vehicles','Doha HQ — Floor 3','Management','','Toyota','Camry XLE 2024','2024-01-10',145000.00,'2026-01-09','active','Company pool car #1'],
-        ['G2-IT-008','Logitech MX Keys','IT Equipment','Storage Room','Technology','LGT2024001','Logitech','MX Keys for Mac','2024-11-01',650.00,'2025-10-31','in_storage','Spare peripherals'],
+    $pc_rows = [
+        ['doha', 45.00,  'Transport',              'Uber to client meeting — Lusail',             'paid',   0],
+        ['doha', 320.00, 'Meals & Entertainment',  'Team lunch — 8 pax',                          'paid',   3],
+        ['doha', 85.50,  'Office Supplies',        'Printer ink cartridges x4',                   'unpaid', 6],
+        ['doha', 150.00, 'Transport',              'Airport taxi for client pickup',               'paid',   9],
+        ['doha', 220.00, 'Meals & Entertainment',  'Dinner with client — Qatar National Bank',    'unpaid', 12],
+        ['doha', 45.00,  'Office Supplies',        'Whiteboard markers and notebooks',             'paid',   15],
+        ['doha', 500.00, 'Utilities',              'Parking permit — monthly renewal',             'unpaid', 18],
+        ['doha', 75.00,  'Maintenance',            'Coffee machine filter replacement',            'paid',   21],
+        ['doha', 180.00, 'Transport',              'Careem rides — weekly (3 trips)',              'unpaid', 24],
+        ['doha', 95.00,  'Meals & Entertainment',  'Catering for internal strategy session',       'paid',   27],
+        ['beirut', 35.00,  'Transport',            'Taxi to DHL for courier pickup',               'paid',   0],
+        ['beirut', 85.00,  'Meals & Entertainment','Working lunch — new client onboarding',        'paid',   4],
+        ['beirut', 42.50,  'Office Supplies',      'A4 paper ream x5',                            'unpaid', 8],
+        ['beirut', 60.00,  'Transport',            'Airport transfer — visiting GM',               'paid',   12],
+        ['beirut', 120.00, 'Communication',        'Mobile top-up reimbursement — 4 staff',        'paid',   16],
+        ['beirut', 25.00,  'Other',                'Bank charges — wire transfer fee',             'unpaid', 20],
+        ['beirut', 55.00,  'Meals & Entertainment','Coffee meeting with supplier',                 'paid',   24],
+        ['beirut', 38.00,  'Office Supplies',      'Stapler, scissors, tape',                      'unpaid', 28],
     ];
 
-    $ast = $db->prepare("INSERT INTO assets (tag,name,category_id,location_id,department_id,serial_number,brand,model,purchase_date,purchase_value,warranty_expiry,status,notes,depreciation_method,useful_life_years,salvage_value,created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,'straight_line',3,500,?)");
-    foreach ($asset_rows as [$tag,$name,$cat,$loc,$dept,$sn,$brand,$model,$pd,$val,$warr,$stat,$notes]) {
-        $cid = $cat_ids[$cat] ?? null;
-        $lid = $loc_ids[$loc] ?? null;
-        $did = $dept_ids[$dept] ?? null;
-        try {
-            $ast->execute([$tag,$name,$cid,$lid,$did,$sn,$brand,$model,$pd,$val,$warr,$stat,$notes,$uid]);
-            $cnt++;
-        } catch (\Exception $e) { /* skip duplicates */ }
+    foreach ($pc_rows as [$office, $amt, $cat, $desc, $status, $days_ago]) {
+        $safe("petty_cash[$office]", function() use ($pc_stmt, $uid, $office, $amt, $cat, $desc, $status, $days_ago, $pc_has_created) {
+            $params = [$uid, $office, $amt, $cat, $desc, $status];
+            if ($pc_has_created) $params[] = date('Y-m-d H:i:s', strtotime("-{$days_ago} days"));
+            $pc_stmt->execute($params);
+        });
     }
 
-    $msg = "Seeded $cnt mockup records — form submissions, petty cash (Doha & Beirut), and " . count($asset_rows) . " assets with categories/locations/departments.";
+    // ── 3. Assets ──
+    try {
+        $db->exec('SET FOREIGN_KEY_CHECKS=0');
+
+        $cats_map = ['IT Equipment'=>'💻','Printers & Peripherals'=>'🖨','Mobile Devices'=>'📱','Furniture'=>'🪑','Vehicles'=>'🚗','AV Equipment'=>'📷'];
+        $cat_ids = [];
+        foreach ($cats_map as $name => $icon) {
+            $r = $db->prepare("SELECT id FROM asset_categories WHERE name=?"); $r->execute([$name]);
+            $id = $r->fetchColumn();
+            if (!$id) { $db->prepare("INSERT INTO asset_categories (name,icon) VALUES (?,?)")->execute([$name,$icon]); $id = $db->lastInsertId(); }
+            $cat_ids[$name] = $id;
+        }
+
+        $locs_map = [['Doha HQ — Floor 3','doha'],['Doha HQ — Floor 4','doha'],['Beirut Office','beirut'],['Storage Room','doha']];
+        $loc_ids = [];
+        foreach ($locs_map as [$name, $office]) {
+            $r = $db->prepare("SELECT id FROM asset_locations WHERE name=?"); $r->execute([$name]);
+            $id = $r->fetchColumn();
+            if (!$id) { $db->prepare("INSERT INTO asset_locations (name,office) VALUES (?,?)")->execute([$name,$office]); $id = $db->lastInsertId(); }
+            $loc_ids[$name] = $id;
+        }
+
+        $depts_map = ['Creative','Technology','Finance','Client Services','Management'];
+        $dept_ids = [];
+        foreach ($depts_map as $name) {
+            $r = $db->prepare("SELECT id FROM asset_departments WHERE name=?"); $r->execute([$name]);
+            $id = $r->fetchColumn();
+            if (!$id) { $db->prepare("INSERT INTO asset_departments (name) VALUES (?)")->execute([$name]); $id = $db->lastInsertId(); }
+            $dept_ids[$name] = $id;
+        }
+
+        $db->exec('SET FOREIGN_KEY_CHECKS=1');
+
+        // Detect assets columns
+        $ast_cols = array_column($db->query("DESCRIBE assets")->fetchAll(), 'Field');
+        $has_dep  = in_array('depreciation_method', $ast_cols);
+        $has_life = in_array('useful_life_years', $ast_cols);
+        $has_salv = in_array('salvage_value', $ast_cols);
+        $has_crby = in_array('created_by', $ast_cols);
+
+        $col_list = 'tag,name,category_id,location_id,department_id,serial_number,brand,model,purchase_date,purchase_value,warranty_expiry,status,notes';
+        $ph_list  = '?,?,?,?,?,?,?,?,?,?,?,?,?';
+        if ($has_dep)  { $col_list .= ',depreciation_method'; $ph_list .= ",'straight_line'"; }
+        if ($has_life) { $col_list .= ',useful_life_years';   $ph_list .= ',3'; }
+        if ($has_salv) { $col_list .= ',salvage_value';       $ph_list .= ',500'; }
+        if ($has_crby) { $col_list .= ',created_by';         $ph_list .= ',?'; }
+
+        $ast_stmt = $db->prepare("INSERT IGNORE INTO assets ($col_list) VALUES ($ph_list)");
+
+        $asset_rows = [
+            ['G2-IT-001','MacBook Pro 14 M4','IT Equipment','Doha HQ — Floor 3','Creative','FVFXQ2ABCD','Apple','MacBook Pro 14','2025-01-15',12500.00,'2027-01-14','active','Assigned to Ahmad Nasser'],
+            ['G2-IT-002','MacBook Pro 14 M4','IT Equipment','Doha HQ — Floor 4','Technology','FVFXQ2ABCE','Apple','MacBook Pro 14','2025-01-15',12500.00,'2027-01-14','active','Assigned to Fadi Shehadeh'],
+            ['G2-IT-003','Dell XPS 15','IT Equipment','Doha HQ — Floor 3','Finance','SN-XPS15-009','Dell','XPS 15 9530','2024-06-01',9800.00,'2026-05-31','active','Finance workstation'],
+            ['G2-IT-004','HP LaserJet Pro','Printers & Peripherals','Doha HQ — Floor 3','Creative','CNBKG12345','HP','LaserJet Pro M404dn','2023-03-10',2200.00,'2025-03-09','active','Main print room'],
+            ['G2-MOB-001','iPhone 16 Pro','Mobile Devices','Doha HQ — Floor 4','Client Services','F2LN8WXYZ1','Apple','iPhone 16 Pro 256GB','2024-10-01',5500.00,'2026-09-30','active','Assigned to Lara Hassan'],
+            ['G2-MOB-002','iPhone 15','Mobile Devices','Beirut Office','Client Services','F2LN8WXYB2','Apple','iPhone 15 128GB','2023-11-01',4200.00,'2025-10-31','active','Beirut team device'],
+            ['G2-MOB-003','Samsung Galaxy S24','Mobile Devices','Doha HQ — Floor 3','Management','RF8N30ABCD','Samsung','Galaxy S24 Ultra','2024-02-15',4800.00,'2026-02-14','active',''],
+            ['G2-AV-001','Sony A7 IV Camera','AV Equipment','Doha HQ — Floor 3','Creative','5041234ABC','Sony','A7 IV','2024-05-01',18000.00,'2026-04-30','active','Studio production camera'],
+            ['G2-AV-002','DJI Mavic 3 Pro','AV Equipment','Storage Room','Creative','DJI2024PRO1','DJI','Mavic 3 Pro','2024-07-15',12000.00,'2026-07-14','active','Aerial photography'],
+            ['G2-FUR-001','Executive Desk Set','Furniture','Doha HQ — Floor 4','Management','','Jasper','Executive L-Desk','2022-01-01',8500.00,null,'active','MD Office'],
+            ['G2-IT-005','iPad Pro 12.9','IT Equipment','Beirut Office','Management','DMPL2ABCDE','Apple','iPad Pro M4','2024-09-01',6200.00,'2026-08-31','active',''],
+            ['G2-IT-006','Dell Monitor 27','IT Equipment','Doha HQ — Floor 3','Technology','CN0A1B2C3D','Dell','UltraSharp U2723DE','2023-08-01',2800.00,'2025-07-31','active','Dual monitor setup'],
+            ['G2-IT-007','MacBook Air M3','IT Equipment','Beirut Office','Creative','FVFXQ2ZZZ1','Apple','MacBook Air 15 M3','2024-03-01',9200.00,'2026-02-28','active',''],
+            ['G2-VEH-001','Toyota Camry 2024','Vehicles','Doha HQ — Floor 3','Management','','Toyota','Camry XLE 2024','2024-01-10',145000.00,'2026-01-09','active','Company pool car'],
+            ['G2-IT-008','Logitech MX Keys','IT Equipment','Storage Room','Technology','LGT2024001','Logitech','MX Keys for Mac','2024-11-01',650.00,'2025-10-31','in_storage','Spare peripherals'],
+        ];
+
+        foreach ($asset_rows as [$tag,$aname,$cat,$loc,$dept,$sn,$brand,$model,$pd,$val,$warr,$stat,$notes]) {
+            $safe("asset[$tag]", function() use ($ast_stmt, $cat_ids, $loc_ids, $dept_ids, $uid, $has_crby, $tag,$aname,$cat,$loc,$dept,$sn,$brand,$model,$pd,$val,$warr,$stat,$notes) {
+                $params = [$tag,$aname,$cat_ids[$cat]??null,$loc_ids[$loc]??null,$dept_ids[$dept]??null,$sn,$brand,$model,$pd,$val,$warr,$stat,$notes];
+                if ($has_crby) $params[] = $uid;
+                $ast_stmt->execute($params);
+            });
+        }
+    } catch (\Throwable $e) {
+        $errors[] = 'assets setup: ' . $e->getMessage();
+    }
+
+    if ($errors) {
+        $msg   = "Seeded $cnt records. Errors (" . count($errors) . "): " . implode(' | ', array_slice($errors, 0, 5));
+        $mtype = 'warn';
+    } else {
+        $msg = "Seeded $cnt records — form submissions, petty cash (Doha & Beirut), and 15 assets with lookups.";
+    }
 }
 
 // ── Action: Purge all data ────────────────────────────────────────────────────
