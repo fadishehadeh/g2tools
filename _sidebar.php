@@ -200,6 +200,9 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <span class="sb-chevron">›</span>
       </button>
       <div class="sb-group-body">
+        <a class="sb-item<?= _sb_act('/g2forms/admin/dashboard') ?>" href="/admin/dashboard.php">
+          <span class="sb-icon">📊</span> Dashboard
+        </a>
         <?php if (is_finance_admin()): ?>
         <a class="sb-item<?= _sb_act('/g2forms/admin/submissions') ?>" href="/admin/submissions.php">
           <span class="sb-icon">◈</span> All Submissions
