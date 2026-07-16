@@ -30,7 +30,7 @@ function curl_post(string $url, array $fields): bool {
 $base = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://localhost' . BASE_URL;
 
 // ── Action: Generate sample PDFs ─────────────────────────────────────────────
-if ($_POST['action'] ?? '' === 'gen_pdfs') {
+if (($_POST['action'] ?? '') === 'gen_pdfs') {
     $uid = current_user()['id'];
     $before = glob(STORAGE_PATH . '*.pdf');
 
@@ -149,7 +149,7 @@ if ($_POST['action'] ?? '' === 'gen_pdfs') {
 }
 
 // ── Action: Seed mockup data ─────────────────────────────────────────────────
-if ($_POST['action'] ?? '' === 'seed') {
+if (($_POST['action'] ?? '') === 'seed') {
     $uid    = current_user()['id'];
     $db     = db();
     $errors = [];
@@ -319,7 +319,7 @@ if ($_POST['action'] ?? '' === 'seed') {
 }
 
 // ── Action: Purge all data ────────────────────────────────────────────────────
-if ($_POST['action'] ?? '' === 'purge') {
+if (($_POST['action'] ?? '') === 'purge') {
     $scope = $_POST['scope'] ?? 'all';
     $db    = db();
     $tables = [];
