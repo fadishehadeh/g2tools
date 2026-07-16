@@ -52,14 +52,6 @@ $recent = $db->query("
 ")->fetchAll();
 
 // ── Petty cash breakdown ──────────────────────────────────────────────────────
-$pc_stats = $db->query("
-    SELECT office,
-           SUM(status='paid') paid_count, COALESCE(SUM(CASE WHEN status='paid' THEN amount END),0) paid_amt,
-           SUM(status='unpaid') unpaid_count, COALESCE(SUM(CASE WHEN status='unpaid' THEN amount END),0) unpaid_amt,
-           COUNT(*) total_count, COALESCE(SUM(amount),0) total_amt
-    FROM petty_cash_requests GROUP BY office
-")->fetchAll(PDO::FETCH_KEY_PAIR | PDO::FETCH_GROUP);
-// Re-fetch properly
 $pc_stats = [];
 $pc_q = $db->query("SELECT office, SUM(status='paid') paid_count, COALESCE(SUM(CASE WHEN status='paid' THEN amount END),0) paid_amt, SUM(status='unpaid') unpaid_count, COALESCE(SUM(CASE WHEN status='unpaid' THEN amount END),0) unpaid_amt, COUNT(*) total_count, COALESCE(SUM(amount),0) total_amt FROM petty_cash_requests GROUP BY office");
 foreach ($pc_q->fetchAll() as $r) $pc_stats[$r['office']] = $r;
