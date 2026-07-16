@@ -310,6 +310,62 @@ if (($_POST['action'] ?? '') === 'seed') {
         $errors[] = 'assets setup: ' . $e->getMessage();
     }
 
+    // ── 4. Vendor registrations ──
+    $vendor_rows = [
+        [json_encode([
+            'legal_name'=>'PrintZone LLC','aka_name'=>'PrintZone','company_type'=>'LLC',
+            'company_license'=>'CR-2019-04182','tax_no'=>'300412834700003','co_reg_no'=>'','icv_score'=>'72',
+            'annual_spend'=>'QAR 50,000 – 100,000','related_party'=>'No','related_party_desc'=>'',
+            'source'=>['Referral'],'client_ref_name'=>'Ahmad Nasser',
+            'zip_code'=>'','city'=>'Doha','state'=>'','country'=>'Qatar',
+            'bank_account_name'=>'PrintZone LLC','bank_company_address'=>'Al Sadd, Doha, Qatar',
+            'account_number'=>'0142857300001','bank_currency'=>'QAR',
+            'bank_name'=>'Qatar National Bank','bank_address'=>'QNB Tower, West Bay, Doha',
+            'swift_code'=>'QNBAQAQA','iban'=>'QA58QNBA000000000142857300001',
+            'rep_name'=>'Mohammed Al-Hajri','rep_designation'=>'Managing Director','rep_date'=>'01/06/2026',
+            'uploaded_files'=>[],
+        ]), 20],
+        [json_encode([
+            'legal_name'=>'TechBridge Solutions W.L.L.','aka_name'=>'TechBridge','company_type'=>'WLL',
+            'company_license'=>'CR-2021-09034','tax_no'=>'300891234500003','co_reg_no'=>'','icv_score'=>'85',
+            'annual_spend'=>'QAR 100,000 – 250,000','related_party'=>'No','related_party_desc'=>'',
+            'source'=>['Google Search'],'client_ref_name'=>'',
+            'zip_code'=>'','city'=>'Doha','state'=>'','country'=>'Qatar',
+            'bank_account_name'=>'TechBridge Solutions WLL','bank_company_address'=>'C-Ring Road, Doha',
+            'account_number'=>'0098712300004','bank_currency'=>'USD',
+            'bank_name'=>'HSBC Bank Middle East','bank_address'=>'Al Corniche, Doha',
+            'swift_code'=>'BBMEQAQX','iban'=>'QA30BBME000000000098712300004',
+            'rep_name'=>'Sara Al-Rashidi','rep_designation'=>'CEO','rep_date'=>'10/06/2026',
+            'uploaded_files'=>[],
+        ]), 10],
+        [json_encode([
+            'legal_name'=>'Creative Pixel Studio S.A.R.L.','aka_name'=>'CPS','company_type'=>'SARL',
+            'company_license'=>'LB-2020-11203','tax_no'=>'','co_reg_no'=>'1120300','icv_score'=>'',
+            'annual_spend'=>'USD 25,000 – 50,000','related_party'=>'No','related_party_desc'=>'',
+            'source'=>['LinkedIn'],'client_ref_name'=>'',
+            'zip_code'=>'1107','city'=>'Beirut','state'=>'Beirut Governorate','country'=>'Lebanon',
+            'bank_account_name'=>'Creative Pixel Studio SARL','bank_company_address'=>'Hamra, Beirut, Lebanon',
+            'account_number'=>'LB62004900000000000123456789','bank_currency'=>'USD',
+            'bank_name'=>'Bankmed SAL','bank_address'=>'Minet El Hosn, Beirut',
+            'swift_code'=>'BMEDLBBX','iban'=>'LB62004900000000000123456789',
+            'rep_name'=>'Nour Khalil','rep_designation'=>'Co-Founder','rep_date'=>'05/07/2026',
+            'uploaded_files'=>[],
+        ]), 5],
+    ];
+
+    foreach ($vendor_rows as [$fd, $days_ago]) {
+        $safe("vendor_reg", function() use ($db, $uid, $fd, $days_ago, $has_created_at) {
+            $fs_cols = array_column($db->query("DESCRIBE form_submissions")->fetchAll(), 'Field');
+            $has_ca  = in_array('created_at', $fs_cols);
+            if ($has_ca)
+                $db->prepare("INSERT INTO form_submissions (user_id,form_type,form_data,pdf_filename,created_at) VALUES (NULL,'vendor_reg',?,NULL,?)")
+                   ->execute([$fd, date('Y-m-d H:i:s', strtotime("-{$days_ago} days"))]);
+            else
+                $db->prepare("INSERT INTO form_submissions (user_id,form_type,form_data,pdf_filename) VALUES (NULL,'vendor_reg',?,NULL)")
+                   ->execute([$fd]);
+        });
+    }
+
     if ($errors) {
         $msg   = "Seeded $cnt records. Errors (" . count($errors) . "): " . implode(' | ', array_slice($errors, 0, 5));
         $mtype = 'warn';
