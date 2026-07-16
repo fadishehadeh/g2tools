@@ -106,13 +106,17 @@ tr.clickable-row:hover .asset-name{color:#FF3D33}
 
   <div class="panel">
     <table>
+      <?php $today = date('Y-m-d'); ?>
       <thead><tr>
         <th>Asset</th><th>Category</th><th>Brand / Model</th><th>Location</th>
-        <th>Assigned To</th><th style="text-align:right">Value</th><th>Status</th><th></th>
+        <th>Assigned To</th><th>Condition</th><th>Warranty</th><th>Status</th><th></th>
       </tr></thead>
       <tbody>
       <?php foreach ($assets as $a):
         [$sbg,$sfg] = $status_colors[$a['status']] ?? ['#f5f6f8','#888'];
+        $condition_colors = ['new'=>['#f0fdf4','#16a34a'],'good'=>['#eff6ff','#2563eb'],'fair'=>['#fffbeb','#d97706'],'poor'=>['#fef2f2','#dc2626']];
+        $condition_labels = ['new'=>'New','good'=>'Good','fair'=>'Fair','poor'=>'Poor'];
+        $warranty_days = $a['warranty_expiry'] ? (int)((strtotime($a['warranty_expiry']) - strtotime($today)) / 86400) : null;
       ?>
       <tr class="clickable-row" onclick="location.href='view.php?id=<?= $a['id'] ?>'" style="cursor:pointer">
         <td>
@@ -123,13 +127,28 @@ tr.clickable-row:hover .asset-name{color:#FF3D33}
         <td style="color:#555"><?= htmlspecialchars(implode(' ', array_filter([$a['brand'],$a['model']])) ?: '—') ?></td>
         <td style="color:#555"><?= htmlspecialchars($a['loc_name'] ?? '—') ?></td>
         <td style="color:#555"><?= htmlspecialchars($a['assigned_to'] ?? '—') ?></td>
-        <td style="text-align:right;font-weight:600"><?= $a['purchase_value'] ? number_format($a['purchase_value'],2) : '—' ?></td>
+        <td>
+          <?php if ($a['condition_state']): $cc = $condition_colors[$a['condition_state']] ?? ['#f5f6f8','#888']; ?>
+          <span class="status-badge" style="background:<?= $cc[0] ?>;color:<?= $cc[1] ?>"><?= $condition_labels[$a['condition_state']] ?></span>
+          <?php else: ?><span style="color:#ccc">—</span><?php endif; ?>
+        </td>
+        <td>
+          <?php if ($warranty_days === null): ?>
+            <span style="color:#ccc">—</span>
+          <?php elseif ($warranty_days < 0): ?>
+            <span class="status-badge" style="background:#fef2f2;color:#dc2626">⚠ Expired</span>
+          <?php elseif ($warranty_days <= 90): ?>
+            <span class="status-badge" style="background:#fffbeb;color:#d97706">⚠ <?= $warranty_days ?>d</span>
+          <?php else: ?>
+            <span style="color:#888;font-size:12px"><?= date('M Y', strtotime($a['warranty_expiry'])) ?></span>
+          <?php endif; ?>
+        </td>
         <td><span class="status-badge" style="background:<?= $sbg ?>;color:<?= $sfg ?>"><?= ucfirst(str_replace('_',' ',$a['status'])) ?></span></td>
         <td><a class="view-link" href="view.php?id=<?= $a['id'] ?>" onclick="event.stopPropagation()">View →</a></td>
       </tr>
       <?php endforeach; ?>
       <?php if (!$assets): ?>
-      <tr><td colspan="8" style="text-align:center;padding:40px;color:#ccc">No assets found.</td></tr>
+      <tr><td colspan="9" style="text-align:center;padding:40px;color:#ccc">No assets found.</td></tr>
       <?php endif; ?>
       </tbody>
     </table>

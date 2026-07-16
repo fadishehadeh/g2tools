@@ -171,15 +171,35 @@ $status_colors = ['active'=>['#f0fdf4','#16a34a'],'in_repair'=>['#fffbeb','#d977
   <!-- Details -->
   <div class="panel">
     <h2>Details</h2>
+    <?php
+      $condition_labels = ['new'=>'New','good'=>'Good','fair'=>'Fair','poor'=>'Poor'];
+      $condition_colors = ['new'=>['#f0fdf4','#16a34a'],'good'=>['#eff6ff','#2563eb'],'fair'=>['#fffbeb','#d97706'],'poor'=>['#fef2f2','#dc2626']];
+      $today = date('Y-m-d');
+      $warranty_days = $a['warranty_expiry'] ? (int)((strtotime($a['warranty_expiry']) - strtotime($today)) / 86400) : null;
+    ?>
     <dl class="dl">
+      <dt>Asset Tag</dt><dd style="font-family:monospace;font-weight:700;font-size:14px"><?= htmlspecialchars($a['tag']) ?></dd>
       <dt>Brand / Model</dt><dd><?= htmlspecialchars(implode(' ', array_filter([$a['brand'],$a['model']])) ?: '—') ?></dd>
+      <dt>Vendor / Supplier</dt><dd><?= htmlspecialchars($a['vendor'] ?? '—') ?></dd>
       <dt>Serial Number</dt><dd><?= htmlspecialchars($a['serial_number'] ?? '—') ?></dd>
+      <?php if ($a['condition_state']): $cc = $condition_colors[$a['condition_state']] ?? ['#f5f6f8','#888']; ?>
+      <dt>Condition</dt><dd><span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700;background:<?= $cc[0] ?>;color:<?= $cc[1] ?>"><?= $condition_labels[$a['condition_state']] ?></span></dd>
+      <?php endif; ?>
       <dt>Category</dt><dd><?= $a['cat_icon'] ?? '' ?> <?= htmlspecialchars($a['cat_name'] ?? '—') ?></dd>
       <dt>Location</dt><dd><?= htmlspecialchars($a['loc_name'] ?? '—') ?></dd>
       <dt>Department</dt><dd><?= htmlspecialchars($a['dept_name'] ?? '—') ?></dd>
       <dt>Purchase Date</dt><dd><?= $a['purchase_date'] ? date('d M Y', strtotime($a['purchase_date'])) : '—' ?></dd>
       <dt>Purchase Value</dt><dd><?= $a['purchase_value'] ? 'QAR '.number_format($a['purchase_value'],2) : '—' ?></dd>
-      <dt>Warranty Expiry</dt><dd><?= $a['warranty_expiry'] ? date('d M Y', strtotime($a['warranty_expiry'])) : '—' ?></dd>
+      <dt>Warranty Expiry</dt><dd>
+        <?php if ($a['warranty_expiry']): ?>
+          <?= date('d M Y', strtotime($a['warranty_expiry'])) ?>
+          <?php if ($warranty_days < 0): ?>
+            <span style="display:inline-block;margin-left:8px;padding:2px 8px;background:#fef2f2;color:#dc2626;border-radius:10px;font-size:11px;font-weight:700">⚠ Expired</span>
+          <?php elseif ($warranty_days <= 90): ?>
+            <span style="display:inline-block;margin-left:8px;padding:2px 8px;background:#fffbeb;color:#d97706;border-radius:10px;font-size:11px;font-weight:700">⚠ Expires in <?= $warranty_days ?>d</span>
+          <?php endif; ?>
+        <?php else: ?>—<?php endif; ?>
+      </dd>
       <?php if ($a['notes']): ?><dt>Notes</dt><dd><?= nl2br(htmlspecialchars($a['notes'])) ?></dd><?php endif; ?>
     </dl>
   </div>

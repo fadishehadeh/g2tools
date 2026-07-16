@@ -19,11 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $f('name');
     if (!$name) { $error = 'Name is required.'; }
     else {
-        db()->prepare("UPDATE assets SET name=?,category_id=?,location_id=?,department_id=?,serial_number=?,brand=?,model=?,purchase_date=?,purchase_value=?,warranty_expiry=?,status=?,notes=?,depreciation_method=?,useful_life_years=?,salvage_value=? WHERE id=?")
+        db()->prepare("UPDATE assets SET name=?,category_id=?,location_id=?,department_id=?,serial_number=?,brand=?,vendor=?,model=?,condition_state=?,purchase_date=?,purchase_value=?,warranty_expiry=?,status=?,notes=?,depreciation_method=?,useful_life_years=?,salvage_value=? WHERE id=?")
           ->execute([
             $name,
             ($f('category_id') ?: null), ($f('location_id') ?: null), ($f('department_id') ?: null),
-            ($f('serial_number') ?: null), ($f('brand') ?: null), ($f('model') ?: null),
+            ($f('serial_number') ?: null), ($f('brand') ?: null), ($f('vendor') ?: null),
+            ($f('model') ?: null), ($f('condition_state') ?: null),
             ($f('purchase_date') ?: null),
             ($f('purchase_value') !== '' ? (float)$f('purchase_value') : null),
             ($f('warranty_expiry') ?: null), $_POST['status'] ?? 'active',
@@ -73,8 +74,19 @@ $a = array_merge($a, array_intersect_key($_POST, $a));
         <div class="field"><label class="field-label">Asset Tag</label><input type="text" value="<?= htmlspecialchars($a['tag']) ?>" disabled style="background:#f5f6f8;color:#aaa"></div>
       </div>
       <div class="grid2">
-        <div class="field"><label class="field-label">Brand</label><input type="text" name="brand" value="<?= htmlspecialchars($a['brand']??'') ?>"></div>
+        <div class="field"><label class="field-label">Brand / Manufacturer</label><input type="text" name="brand" value="<?= htmlspecialchars($a['brand']??'') ?>"></div>
         <div class="field"><label class="field-label">Model</label><input type="text" name="model" value="<?= htmlspecialchars($a['model']??'') ?>"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label class="field-label">Vendor / Supplier</label><input type="text" name="vendor" value="<?= htmlspecialchars($a['vendor']??'') ?>"></div>
+        <div class="field"><label class="field-label">Condition</label>
+          <select name="condition_state">
+            <option value="">— Select —</option>
+            <?php foreach (['new'=>'New','good'=>'Good','fair'=>'Fair','poor'=>'Poor'] as $k=>$v): ?>
+            <option value="<?= $k ?>" <?= ($a['condition_state']??'')===$k?'selected':'' ?>><?= $v ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
       </div>
       <div class="field" style="max-width:300px"><label class="field-label">Serial Number</label><input type="text" name="serial_number" value="<?= htmlspecialchars($a['serial_number']??'') ?>"></div>
     </div>

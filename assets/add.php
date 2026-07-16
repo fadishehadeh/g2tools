@@ -25,12 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $dup->execute([$tag]);
         if ($dup->fetchColumn()) { $error = "Tag '$tag' already exists."; }
         else {
-            db()->prepare("INSERT INTO assets (tag,name,category_id,location_id,department_id,serial_number,brand,model,purchase_date,purchase_value,warranty_expiry,status,notes,depreciation_method,useful_life_years,salvage_value,created_by)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+            db()->prepare("INSERT INTO assets (tag,name,category_id,location_id,department_id,serial_number,brand,vendor,model,condition_state,purchase_date,purchase_value,warranty_expiry,status,notes,depreciation_method,useful_life_years,salvage_value,created_by)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
               ->execute([
                 $tag, $name,
                 ($f('category_id') ?: null), ($f('location_id') ?: null), ($f('department_id') ?: null),
-                ($f('serial_number') ?: null), ($f('brand') ?: null), ($f('model') ?: null),
+                ($f('serial_number') ?: null), ($f('brand') ?: null), ($f('vendor') ?: null),
+                ($f('model') ?: null), ($f('condition_state') ?: null),
                 ($f('purchase_date') ?: null), ($f('purchase_value') !== '' ? (float)$f('purchase_value') : null),
                 ($f('warranty_expiry') ?: null), $status,
                 ($f('notes') ?: null),
@@ -109,12 +110,27 @@ $suggested_tag = 'G2-' . str_pad($next_num, 5, '0', STR_PAD_LEFT);
       </div>
       <div class="grid2">
         <div class="field">
-          <label class="field-label">Brand</label>
+          <label class="field-label">Brand / Manufacturer</label>
           <input type="text" name="brand" placeholder="e.g. Dell" value="<?= htmlspecialchars($_POST['brand']??'') ?>">
         </div>
         <div class="field">
           <label class="field-label">Model</label>
           <input type="text" name="model" placeholder="e.g. XPS 15 9520" value="<?= htmlspecialchars($_POST['model']??'') ?>">
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label class="field-label">Vendor / Supplier</label>
+          <input type="text" name="vendor" placeholder="Who it was purchased from" value="<?= htmlspecialchars($_POST['vendor']??'') ?>">
+        </div>
+        <div class="field">
+          <label class="field-label">Condition</label>
+          <select name="condition_state">
+            <option value="">— Select —</option>
+            <?php foreach (['new'=>'New','good'=>'Good','fair'=>'Fair','poor'=>'Poor'] as $k=>$v): ?>
+            <option value="<?= $k ?>" <?= ($_POST['condition_state']??'')===$k?'selected':'' ?>><?= $v ?></option>
+            <?php endforeach; ?>
+          </select>
         </div>
       </div>
       <div class="field" style="max-width:300px">
