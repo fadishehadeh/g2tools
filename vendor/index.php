@@ -9,6 +9,7 @@ require '../config.php';
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vendor Registration — Grey Doha</title>
 <link rel="stylesheet" href="/form.css">
+<script src="/form-validate.js" defer></script>
 <style>
   body { background: #f6f7f9; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 16px 80px; }
   .form-card { max-width: 700px; width: 100%; }
@@ -43,7 +44,7 @@ require '../config.php';
   </div>
   <div class="form-accent-bar"></div>
 
-  <form method="POST" action="submit.php" enctype="multipart/form-data">
+  <form method="POST" data-validate action="submit.php" enctype="multipart/form-data">
   <div class="form-body">
 
     <div class="section">
@@ -186,3 +187,4 @@ function showFile(input, lblId) {
 </script>
 </body>
 </html>
+

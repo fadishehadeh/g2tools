@@ -11,6 +11,7 @@ require_can('finance_credit_note');
 <title>Credit Note — G2 Tools</title>
 <link rel="stylesheet" href="/sidebar.css">
 <link rel="stylesheet" href="/form.css">
+<script src="/form-validate.js" defer></script>
 <style>
   .items-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
   .items-table th { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase;
@@ -74,7 +75,7 @@ require_can('finance_credit_note');
     </div>
   </div>
 
-  <form method="POST" action="generate.php">
+  <form method="POST" data-validate action="generate.php">
   <input type="hidden" name="company" id="companyHidden" value="grey">
   <div class="form-body">
 
@@ -209,3 +210,4 @@ sel.addEventListener('change',upd);upd();
 </script>
 </body>
 </html>
+

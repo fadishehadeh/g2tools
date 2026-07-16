@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // PUBLIC — no login required
 if (session_status() === PHP_SESSION_NONE) session_start();
 require '../config.php';
@@ -9,6 +9,7 @@ require '../config.php';
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Client Credit Check & Registration — Grey</title>
 <link rel="stylesheet" href="/form.css">
+<script src="/form-validate.js" defer></script>
 <style>
   body { background:#f6f7f9; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 16px 80px; }
   .form-card { max-width:720px; width:100%; }
@@ -36,7 +37,7 @@ require '../config.php';
   </div>
   <div class="form-accent-bar"></div>
 
-  <form method="POST" action="submit.php" enctype="multipart/form-data" id="clientForm">
+  <form method="POST" data-validate action="submit.php" enctype="multipart/form-data" id="clientForm">
   <div class="form-body">
 
     <!-- ── Section 1: Client Information ── -->
@@ -260,3 +261,4 @@ document.getElementById('clientForm').addEventListener('submit', function() {
 </script>
 </body>
 </html>
+

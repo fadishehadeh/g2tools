@@ -48,6 +48,7 @@ $a = array_merge($a, array_intersect_key($_POST, $a));
 <title>Edit Asset — G2 Tools</title>
 <link rel="stylesheet" href="/sidebar.css">
 <link rel="stylesheet" href="/form.css">
+<script src="/form-validate.js" defer></script>
 <style>.form-card{max-width:700px}</style>
 </head>
 <body>
@@ -65,7 +66,7 @@ $a = array_merge($a, array_intersect_key($_POST, $a));
   </div>
   <div class="form-accent-bar"></div>
   <?php if ($error): ?><div style="margin:16px 24px;padding:12px 16px;background:#fff5f5;border:1px solid #fca5a5;border-radius:8px;font-size:13px;color:#dc2626"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-  <form method="POST">
+  <form method="POST" data-validate>
   <div class="form-body">
     <div class="section">
       <div class="section-header"><div class="s-dot"></div><h2>Identity</h2></div>
@@ -149,3 +150,4 @@ $a = array_merge($a, array_intersect_key($_POST, $a));
 </div>
 </body>
 </html>
+

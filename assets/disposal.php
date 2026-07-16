@@ -139,6 +139,7 @@ $eligible = db()->query("SELECT a.id,a.tag,a.name,a.purchase_value,c.name cat_na
 <title>Asset Disposal — G2 Tools</title>
 <link rel="stylesheet" href="/sidebar.css">
 <link rel="stylesheet" href="/form.css">
+<script src="/form-validate.js" defer></script>
 <style>
 .pw{padding:28px 36px 60px;max-width:1000px}
 .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
@@ -176,7 +177,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
   <?php if (is_it_admin() && $eligible): ?>
   <div class="panel">
     <h2>New Disposal Request</h2>
-    <form method="POST">
+    <form method="POST" data-validate>
       <input type="hidden" name="action" value="submit">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
         <div>
@@ -247,7 +248,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
             <span class="badge" style="background:#f0fdf4;color:#16a34a">✓ <?= htmlspecialchars($d['approved_by_name']) ?></span>
           <?php else: ?>
             <?php if (is_it_admin()): ?>
-            <form method="POST" style="display:inline">
+            <form method="POST" data-validate style="display:inline">
               <input type="hidden" name="action" value="approve">
               <input type="hidden" name="disposal_id" value="<?= $d['id'] ?>">
               <button class="btn-sm btn-green" type="submit">Approve</button>
@@ -276,3 +277,4 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
 </div>
 </body>
 </html>
+

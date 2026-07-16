@@ -17,6 +17,7 @@ $companies = [
 <title>Credit Card Authorization — G2</title>
 <link rel="stylesheet" href="/sidebar.css">
 <link rel="stylesheet" href="/form.css">
+<script src="/form-validate.js" defer></script>
 <style>
   .company-bar {
     background: #f8f9fb;
@@ -100,7 +101,7 @@ $companies = [
     </div>
   </div>
 
-  <form method="POST" action="generate.php">
+  <form method="POST" data-validate action="generate.php">
   <input type="hidden" name="company" id="companyHidden" value="g2">
   <div class="form-body">
 
@@ -227,3 +228,4 @@ updateLogo();
 </script>
 </body>
 </html>
+

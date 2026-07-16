@@ -129,7 +129,8 @@ body {
   letter-spacing: 0.2px;
 }
 
-input[type=text], select, textarea {
+input[type=text], input[type=number], input[type=date], input[type=email],
+input[type=tel], input[type=password], select, textarea {
   width: 100%;
   padding: 10px 14px;
   border: 1.5px solid var(--border);
@@ -138,14 +139,56 @@ input[type=text], select, textarea {
   color: var(--dark);
   background: #fff;
   font-family: inherit;
-  transition: border-color .18s, box-shadow .18s;
+  transition: border-color .18s, box-shadow .18s, background .18s;
   appearance: none;
 }
-input[type=text]:focus, select:focus, textarea:focus {
+input[type=text]:focus, input[type=number]:focus, input[type=date]:focus,
+input[type=email]:focus, input[type=tel]:focus, input[type=password]:focus,
+select:focus, textarea:focus {
   outline: none;
   border-color: var(--red);
   box-shadow: 0 0 0 3px rgba(255,61,51,.1);
 }
+
+/* Required field — very light green tint */
+input[required], select[required], textarea[required] {
+  background: #f2fdf4;
+}
+input[required]:focus, select[required]:focus, textarea[required]:focus {
+  background: #fff;
+}
+
+/* Field error state (added by JS validation) */
+.field-error input, .field-error select, .field-error textarea,
+.field-error .upload-label {
+  border-color: #dc2626 !important;
+  border-style: solid !important;
+  background: #fff5f5 !important;
+}
+.field-error-msg {
+  display: none;
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #dc2626;
+}
+.field-error .field-error-msg { display: block; }
+
+/* Upload label (styled file picker) */
+.upload-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: #f2fdf4;
+  transition: border-color .18s, background .18s;
+}
+.upload-label:hover { border-color: #86efac; }
+.upload-label span { font-size: 13px; color: #aaa; }
+.upload-label.has-file span { color: var(--dark); }
 input[readonly] {
   background: #fafafa;
   color: #aaa;

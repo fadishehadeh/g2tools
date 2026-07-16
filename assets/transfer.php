@@ -80,6 +80,7 @@ $users_list  = db()->query("SELECT id,name FROM users WHERE is_active=1 ORDER BY
 <title>Asset Transfer — G2 Tools</title>
 <link rel="stylesheet" href="/sidebar.css">
 <link rel="stylesheet" href="/form.css">
+<script src="/form-validate.js" defer></script>
 <style>
 .pw{padding:28px 36px 60px;max-width:1040px}
 .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
@@ -119,7 +120,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
   <?php if (is_it_admin()): ?>
   <div class="panel">
     <h2>New Transfer</h2>
-    <form method="POST">
+    <form method="POST" data-validate>
       <div class="fg fg-3" style="margin-bottom:12px">
         <div>
           <label class="fl">Asset</label>
@@ -215,3 +216,4 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
 </div>
 </body>
 </html>
+

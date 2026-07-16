@@ -11,6 +11,7 @@ require_can('finance_vendor_recon');
 <title>Vendor Payable Reconciliation — G2 Tools</title>
 <link rel="stylesheet" href="/sidebar.css">
 <link rel="stylesheet" href="/form.css">
+<script src="/form-validate.js" defer></script>
 <style>
   .form-card { max-width: 780px; }
   .items-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
@@ -71,7 +72,7 @@ require_can('finance_vendor_recon');
     </div>
   </div>
 
-  <form method="POST" action="generate.php">
+  <form method="POST" data-validate action="generate.php">
   <input type="hidden" name="company" id="companyHidden" value="grey">
   <div class="form-body">
 
@@ -207,3 +208,4 @@ sel.addEventListener('change',upd);upd();
 </script>
 </body>
 </html>
+

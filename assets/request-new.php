@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require '../config.php';
 require_login();
@@ -54,6 +54,7 @@ $urgency_labels = ['low' => 'Low — within a month', 'medium' => 'Medium — wi
 <title>New Asset Request — G2 Tools</title>
 <link rel="stylesheet" href="/sidebar.css">
 <link rel="stylesheet" href="/form.css">
+<script src="/form-validate.js" defer></script>
 </head>
 <body>
 <?php require '../_sidebar.php'; ?>
@@ -87,7 +88,7 @@ $urgency_labels = ['low' => 'Low — within a month', 'medium' => 'Medium — wi
 <div style="margin:16px 24px;padding:12px 16px;background:#fff5f5;border:1px solid #fca5a5;border-radius:8px;font-size:13px;color:#dc2626"><?= htmlspecialchars($error) ?></div>
 <?php endif; ?>
 
-<form method="POST">
+<form method="POST" data-validate>
 <div class="form-body">
   <div class="section">
 
@@ -145,3 +146,4 @@ $urgency_labels = ['low' => 'Low — within a month', 'medium' => 'Medium — wi
 </div>
 </body>
 </html>
+
