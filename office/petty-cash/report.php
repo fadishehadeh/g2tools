@@ -24,8 +24,11 @@ $cat    = $_GET['cat']    ?? '';
 $status = $_GET['status'] ?? '';
 $yr     = (int)date('Y', strtotime($from));  // year for YTD
 
-$categories = ['Transport','Meals & Entertainment','Office Supplies','Utilities','Maintenance','Other'];
-$statuses   = ['pending','approved','rejected','paid'];
+$cat_stmt = db()->prepare("SELECT name FROM petty_cash_categories WHERE office=? ORDER BY sort_order,name");
+$cat_stmt->execute([$office]);
+$categories = $cat_stmt->fetchAll(PDO::FETCH_COLUMN);
+if (!$categories) $categories = ['Transport','Meals & Entertainment','Office Supplies','Utilities','Maintenance','Other'];
+$statuses = ['unpaid','paid'];
 
 // ── Data fetch ────────────────────────────────────────────────────────────────
 function fetch_rows(string $from, string $to, string $cat, string $status, string $office): array {
@@ -53,7 +56,7 @@ function fetch_ytd_rows(int $year, string $office): array {
          JOIN users u ON u.id = r.user_id
          WHERE r.office = ?
            AND YEAR(r.created_at) = ?
-           AND r.status != 'rejected'
+           AND 1=1
          ORDER BY r.created_at"
     );
     $stmt->execute([$office, $year]);
@@ -92,7 +95,7 @@ if (($_GET['export'] ?? '') === 'xlsx') {
     $xls = new XlsxWriter();
 
     // Sheet 1: Raw data
-    $data_rows = [['#','Date','Employee','Category','Description','Amount ('.$o['currency'].')','Status','Reviewed By','Paid At']];
+    $data_rows = [['#','Date','Employee','Category','Description','Amount ('.$o['currency'].')','Status','Paid At']];
     foreach ($rows as $r) {
         $data_rows[] = [
             $r['id'],
@@ -102,13 +105,12 @@ if (($_GET['export'] ?? '') === 'xlsx') {
             $r['description'],
             (float)$r['amount'],
             $r['status'],
-            $r['reviewer'] ?? '',
             $r['paid_at'] ? date('d M Y', strtotime($r['paid_at'])) : '',
         ];
     }
-    $data_rows[] = ['','','','','Total', $total, '', '', ''];
+    $data_rows[] = ['','','','','Total', $total, '', ''];
     $xls->addSheet('Requests', $data_rows,
-        ['text','text','text','text','text','number','text','text','text']);
+        ['text','text','text','text','text','number','text','text']);
 
     // Sheet 2: Pivot — category × month
     $pivot_cats  = array_keys($by_cat ?: ['' => 0]);
@@ -172,9 +174,9 @@ if (($_GET['export'] ?? '') === 'csv') {
     header('Content-Disposition: attachment; filename="petty_cash_'.$office.'_'.$from.'_'.$to.'.csv"');
     $f = fopen('php://output', 'w');
     fprintf($f, chr(0xEF).chr(0xBB).chr(0xBF));
-    fputcsv($f, ['#','Date','Employee','Category','Description','Amount ('.$o['currency'].')','Status','Approved By','Paid At']);
+    fputcsv($f, ['#','Date','Employee','Category','Description','Amount ('.$o['currency'].')','Status','Paid At']);
     foreach ($rows as $r) {
-        fputcsv($f, [$r['id'],date('d M Y',strtotime($r['created_at'])),$r['employee'],$r['category'],$r['description'],number_format($r['amount'],2),$r['status'],$r['reviewer']??'',$r['paid_at']?date('d M Y',strtotime($r['paid_at'])):'']);
+        fputcsv($f, [$r['id'],date('d M Y',strtotime($r['created_at'])),$r['employee'],$r['category'],$r['description'],number_format($r['amount'],2),$r['status'],$r['paid_at']?date('d M Y',strtotime($r['paid_at'])):'']);
     }
     fclose($f); exit;
 }
@@ -226,20 +228,20 @@ if (($_GET['export'] ?? '') === 'pdf') {
 
     // Summary row
     $total_amt = array_sum(array_column($rows, 'amount'));
-    $pending   = count(array_filter($rows, fn($r)=>$r['status']==='pending'));
-    $paid      = count(array_filter($rows, fn($r)=>$r['status']==='paid'));
+    $paid_count   = count(array_filter($rows, fn($r)=>$r['status']==='paid'));
+    $unpaid_count = count(array_filter($rows, fn($r)=>$r['status']==='unpaid'));
 
     $pdf->SetFont('Arial','B',9); $pdf->SetTextColor(80,80,80);
     $pdf->Cell(55,7,'Total Requests: '.count($rows),0,0);
     $pdf->Cell(65,7,'Total Amount: '.$o['currency'].' '.number_format($total_amt,2),0,0);
-    $pdf->Cell(40,7,'Pending: '.$pending,0,0);
-    $pdf->Cell(40,7,'Paid: '.$paid,0,1);
+    $pdf->Cell(40,7,'Paid: '.$paid_count,0,0);
+    $pdf->Cell(40,7,'Unpaid: '.$unpaid_count,0,1);
     $pdf->Ln(2);
 
     // Column widths — total 255 = fits A4 landscape (297 - 14*2 margins = 269 usable)
     // #, Date, Employee, Category, Description, Amount, Status, Approved By, Paid Date
-    $widths  = [10, 24, 38, 32, 68, 26, 20, 32, 25];
-    $headers = ['#', 'Date', 'Employee', 'Category', 'Description', 'Amt ('.$o['currency'].')', 'Status', 'Approved By', 'Paid Date'];
+    $widths  = [10, 24, 42, 32, 80, 28, 20, 29];
+    $headers = ['#', 'Date', 'Employee', 'Category', 'Description', 'Amt ('.$o['currency'].')', 'Status', 'Paid Date'];
 
     $pdf->SetFillColor(30,30,30); $pdf->SetTextColor(255,255,255);
     $pdf->SetFont('Arial','B',8);
@@ -253,8 +255,8 @@ if (($_GET['export'] ?? '') === 'pdf') {
     foreach ($rows as $r) {
         $bg = $fill ? [248,249,251] : [255,255,255];
         $pdf->SetFillColor(...$bg);
-        $status_colors_pdf = ['pending'=>[180,120,0],'approved'=>[22,120,50],'rejected'=>[180,30,30],'paid'=>[8,110,160]];
-        $desc = mb_strimwidth($r['description'] ?? '', 0, 50, '...');
+        $status_colors_pdf = ['unpaid'=>[180,120,0],'paid'=>[8,110,160]];
+        $desc = mb_strimwidth($r['description'] ?? '', 0, 60, '...');
         $cells = [
             $r['id'],
             date('d M Y', strtotime($r['created_at'])),
@@ -263,7 +265,6 @@ if (($_GET['export'] ?? '') === 'pdf') {
             $desc,
             number_format($r['amount'], 2),
             ucfirst($r['status']),
-            $r['reviewer'] ?? '-',
             $r['paid_at'] ? date('d M Y', strtotime($r['paid_at'])) : '-',
         ];
         foreach ($cells as $i => $cell) {
@@ -290,12 +291,48 @@ if (($_GET['export'] ?? '') === 'pdf') {
     $pdf->Cell($widths[5], 7, number_format($total_amt,2), 0, 0, 'R', true);
     $pdf->Cell(array_sum(array_slice($widths,6)), 7, '', 0, 1, 'L', true);
 
+
     $pdf->Output('D', 'petty_cash_'.$office.'_'.date('Ymd').'.pdf');
     exit;
 }
 
+// ── Email report ──────────────────────────────────────────────────────────────
+if (($_GET['export'] ?? '') === 'email') {
+    require '../../mailer.php';
+    $to_email = trim($_GET['email'] ?? '');
+    if (!filter_var($to_email, FILTER_VALIDATE_EMAIL)) {
+        $to_email = $user['email'] ?? '';
+    }
+    // Build HTML table
+    $tbl = '<table style="width:100%;border-collapse:collapse;font-size:13px">';
+    $tbl .= '<tr style="background:#1a1a1a;color:#fff"><th style="padding:8px 10px;text-align:left">#</th><th style="padding:8px 10px;text-align:left">Date</th><th style="padding:8px 10px;text-align:left">Employee</th><th style="padding:8px 10px;text-align:left">Category</th><th style="padding:8px 10px;text-align:left">Description</th><th style="padding:8px 10px;text-align:right">Amount ('.$o['currency'].')</th><th style="padding:8px 10px;text-align:left">Status</th></tr>';
+    $alt = false;
+    foreach ($rows as $r) {
+        $bg = $alt ? '#f9f9f9' : '#fff';
+        $tbl .= '<tr style="background:'.$bg.'"><td style="padding:7px 10px;border-bottom:1px solid #eee">'.$r['id'].'</td>';
+        $tbl .= '<td style="padding:7px 10px;border-bottom:1px solid #eee">'.date('d M Y',strtotime($r['created_at'])).'</td>';
+        $tbl .= '<td style="padding:7px 10px;border-bottom:1px solid #eee">'.htmlspecialchars($r['employee']).'</td>';
+        $tbl .= '<td style="padding:7px 10px;border-bottom:1px solid #eee">'.htmlspecialchars($r['category']).'</td>';
+        $tbl .= '<td style="padding:7px 10px;border-bottom:1px solid #eee">'.htmlspecialchars(mb_strimwidth($r['description'],0,60,'…')).'</td>';
+        $tbl .= '<td style="padding:7px 10px;border-bottom:1px solid #eee;text-align:right;font-weight:700">'.number_format($r['amount'],2).'</td>';
+        $tbl .= '<td style="padding:7px 10px;border-bottom:1px solid #eee">'.ucfirst($r['status']).'</td></tr>';
+        $alt = !$alt;
+    }
+    $tbl .= '<tr style="background:#f5f5f5;font-weight:700"><td colspan="5" style="padding:9px 10px">Total ('.count($rows).' requests)</td><td style="padding:9px 10px;text-align:right">'.$o['currency'].' '.number_format($total,2).'</td><td></td></tr></table>';
+
+    $body_html = mail_template('Petty Cash Report — '.$o['label'], "
+        <p>Period: <strong>".date('d M Y',strtotime($from))." – ".date('d M Y',strtotime($to))."</strong></p>
+        <div class='info-box'><strong>Office</strong> ".$o['flag'].' '.htmlspecialchars($o['label'])."</div>
+        <div class='info-box'><strong>Total</strong> ".$o['currency'].' '.number_format($total,2)."</div>
+        <div class='info-box'><strong>Requests</strong> ".count($rows)."</div>
+        <br>".$tbl);
+    send_mail(['email'=>$to_email,'name'=>$to_email], 'Petty Cash Report — '.$o['label'].' ('.date('d M Y',strtotime($from)).' – '.date('d M Y',strtotime($to)).')', $body_html);
+    $_SESSION['flash'] = ['type'=>'ok','msg'=>'Report emailed to '.$to_email];
+    header('Location: report.php?office='.$office.'&from='.$from.'&to='.$to.'&cat='.urlencode($cat).'&status='.urlencode($status)); exit;
+}
+
 $qs = http_build_query(array_filter(['from'=>$from,'to'=>$to,'cat'=>$cat,'status'=>$status]));
-$status_colors = ['pending'=>['#fffbeb','#d97706'],'approved'=>['#f0fdf4','#16a34a'],'rejected'=>['#fef2f2','#dc2626'],'paid'=>['#ecfeff','#0891b2']];
+$status_colors = ['unpaid'=>['#fef9c3','#854d0e'],'paid'=>['#dbeafe','#1e40af']];
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -363,13 +400,42 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
 <div class="pw">
 
 
+  <!-- Office tabs -->
+  <div style="display:flex;gap:0;margin-bottom:20px;background:#f5f6f8;border-radius:12px;padding:4px;width:fit-content">
+    <?php foreach (OFFICES as $ok => $ov): ?>
+    <a href="report.php?office=<?= $ok ?>" style="padding:9px 22px;border-radius:9px;font-size:13px;font-weight:700;text-decoration:none;transition:all .15s;
+      <?= $office===$ok ? 'background:#fff;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.1)' : 'color:#888' ?>"><?= $ov['flag'] ?> <?= $ov['label'] ?></a>
+    <?php endforeach; ?>
+  </div>
+
+  <?php if (!empty($_SESSION['flash'])): $fl=$_SESSION['flash']; unset($_SESSION['flash']); ?>
+  <div style="margin-bottom:14px;padding:12px 16px;border-radius:8px;font-size:13px;
+    <?= $fl['type']==='ok'?'background:#f0fdf4;border:1px solid #bbf7d0;color:#166534':'background:#fff5f5;border:1px solid #fca5a5;color:#dc2626' ?>">
+    <?= htmlspecialchars($fl['msg']) ?></div>
+  <?php endif; ?>
+
   <div class="ph">
     <h1><?= $o['flag'] ?> <?= htmlspecialchars($o['label']) ?> — Petty Cash Report</h1>
     <div class="export-btns">
-      <a class="export-btn btn-xlsx" href="?office=<?= $office ?>&<?= $qs ?>&export=xlsx">⬇ Excel (with pivot)</a>
-      <a class="export-btn btn-csv"  href="?office=<?= $office ?>&<?= $qs ?>&export=csv">CSV</a>
+      <a class="export-btn btn-xlsx" href="?office=<?= $office ?>&<?= $qs ?>&export=xlsx">⬇ Excel</a>
       <a class="export-btn btn-pdf"  href="?office=<?= $office ?>&<?= $qs ?>&export=pdf">⬇ PDF</a>
+      <button class="export-btn" style="background:#0f172a;color:#fff;border:none;cursor:pointer" onclick="document.getElementById('email-panel').style.display=document.getElementById('email-panel').style.display==='none'?'flex':'none'">✉ Email</button>
     </div>
+  </div>
+
+  <!-- Email panel -->
+  <div id="email-panel" style="display:none;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;margin-bottom:14px;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:13px;color:#555;font-weight:600">Send report to:</span>
+    <form method="GET" style="display:contents">
+      <input type="hidden" name="office" value="<?= $office ?>">
+      <input type="hidden" name="from" value="<?= htmlspecialchars($from) ?>">
+      <input type="hidden" name="to" value="<?= htmlspecialchars($to) ?>">
+      <input type="hidden" name="cat" value="<?= htmlspecialchars($cat) ?>">
+      <input type="hidden" name="status" value="<?= htmlspecialchars($status) ?>">
+      <input type="hidden" name="export" value="email">
+      <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" placeholder="email@greydoha.com" style="padding:8px 12px;border:1.5px solid #dde1e7;border-radius:7px;font-size:13px;min-width:240px;outline:none">
+      <button type="submit" style="padding:8px 16px;background:#FF3D33;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">Send</button>
+    </form>
   </div>
 
   <form class="filters" method="GET">
@@ -402,8 +468,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
     <div class="card"><div class="val"><?= count($rows) ?></div><div class="lbl">Requests</div></div>
     <div class="card"><div class="val"><?= count($rows) ? $o['currency'].' '.number_format($total/count($rows),2) : '—' ?></div><div class="lbl">Avg per Request</div></div>
     <div class="card"><div class="val"><?= ($by_status['paid'] ?? 0) ?></div><div class="lbl">Paid</div></div>
-    <div class="card"><div class="val"><?= ($by_status['pending'] ?? 0) ?></div><div class="lbl">Pending</div></div>
-    <div class="card"><div class="val" style="color:#dc2626"><?= ($by_status['rejected'] ?? 0) ?></div><div class="lbl">Rejected</div></div>
+    <div class="card"><div class="val" style="color:#d97706"><?= ($by_status['unpaid'] ?? 0) ?></div><div class="lbl">Unpaid</div></div>
   </div>
 
   <!-- Three panels: Category | Employee | Monthly YTD -->
@@ -478,7 +543,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
       <thead><tr>
         <th>#</th><th>Date</th><th>Employee</th><th>Category</th><th>Description</th>
         <th style="text-align:right">Amount (<?= $o['currency'] ?>)</th>
-        <th>OCR</th><th>Status</th><th>Reviewed By</th><th>Paid</th>
+        <th>Receipt</th><th>Status</th><th>Paid</th>
       </tr></thead>
       <tbody>
       <?php foreach ($rows as $r):
@@ -494,18 +559,17 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
         <td style="color:#555;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><?= htmlspecialchars($r['description']) ?></td>
         <td style="font-weight:700;text-align:right"><?= number_format($r['amount'],2) ?></td>
         <td style="white-space:nowrap">
-          <?php if ($ocr_flag): ?>
-            <span title="Receipt reads <?= $o['currency'] ?> <?= number_format($ocr_amt,2) ?>" style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;cursor:help">⚠ <?= number_format($ocr_amt,2) ?></span>
-          <?php elseif ($ocr_amt > 0): ?>
-            <span style="background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">✓ OK</span>
-          <?php elseif (!empty($r['receipt'])): ?>
-            <span style="color:#ccc;font-size:11px">—</span>
+          <?php if (!empty($r['receipt'])): $ext=strtolower(pathinfo($r['receipt'],PATHINFO_EXTENSION)); ?>
+            <?php if(in_array($ext,['jpg','jpeg','png'])): ?>
+              <a href="receipt.php?f=<?= urlencode($r['receipt']) ?>" target="_blank" style="color:#2563eb;font-size:12px;font-weight:600;text-decoration:none">📎 View</a>
+            <?php else: ?>
+              <a href="receipt.php?f=<?= urlencode($r['receipt']) ?>" target="_blank" style="color:#2563eb;font-size:12px;font-weight:600;text-decoration:none">📎 PDF</a>
+            <?php endif; ?>
           <?php else: ?>
-            <span style="color:#e5e7eb;font-size:11px">no receipt</span>
+            <span style="font-size:11px;background:#fffbeb;color:#f59e0b;padding:2px 6px;border-radius:6px;font-weight:700">⚠ Missing</span>
           <?php endif; ?>
         </td>
-        <td><span class="status-badge" style="background:<?= $bg ?>;color:<?= $fg ?>"><?= ucfirst($r['status']) ?></span></td>
-        <td style="color:#888"><?= htmlspecialchars($r['reviewer'] ?? '—') ?></td>
+        <td><span class="status-badge" style="background:<?= $bg ?>;color:<?= $fg ?>"><?= $r['status']==='paid'?'Paid':'Unpaid' ?></span></td>
         <td style="color:#888;white-space:nowrap"><?= $r['paid_at'] ? date('d M Y',strtotime($r['paid_at'])) : '—' ?></td>
       </tr>
       <?php endforeach; ?>
@@ -514,7 +578,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfc}
         <tr>
           <td colspan="5" style="font-weight:700;color:#555;padding-top:12px">Total</td>
           <td style="font-weight:800;text-align:right;padding-top:12px"><?= number_format($total,2) ?></td>
-          <td colspan="4"></td>
+          <td colspan="3"></td>
         </tr>
       </tfoot>
     </table>

@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ocr_amount = ocr_extract_amount($receipt_path);
             }
 
-            db()->prepare("INSERT INTO petty_cash_requests (user_id,office,amount,category,description,receipt,ocr_amount) VALUES (?,?,?,?,?,?,?)")
+            db()->prepare("INSERT INTO petty_cash_requests (user_id,office,amount,category,description,receipt,ocr_amount,status) VALUES (?,?,?,?,?,?,?,'unpaid')")
                ->execute([$user['id'], $office, $amount, $category, $desc, $receipt, $ocr_amount]);
 
             $cur = OFFICES[$office]['currency'];
@@ -109,7 +109,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$categories = ['Transport','Meals & Entertainment','Office Supplies','Utilities','Maintenance','Other'];
+$cat_stmt = db()->prepare("SELECT name FROM petty_cash_categories WHERE office=? ORDER BY sort_order,name");
+$cat_stmt->execute([$office]);
+$categories = $cat_stmt->fetchAll(PDO::FETCH_COLUMN);
+if (!$categories) $categories = ['Transport','Meals & Entertainment','Office Supplies','Utilities','Maintenance','Other'];
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
