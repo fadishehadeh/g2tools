@@ -184,7 +184,7 @@ $total_shown = array_sum(array_column($rows, 'amount'));
       <div class="stat-sub"><?= OFFICES[$active_office]['label'] ?></div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Unpaid Requests</div>
+      <div class="stat-label">Unpaid Entries</div>
       <div class="stat-val <?= $unpaid_count>0?'red':'' ?>"><?= $unpaid_count ?></div>
       <div class="stat-sub">Awaiting payment</div>
     </div>
@@ -206,7 +206,7 @@ $total_shown = array_sum(array_column($rows, 'amount'));
 
   <!-- Top bar -->
   <div class="top-bar">
-    <div class="sec-title"><?= $admin ? 'All Requests' : 'My Requests' ?></div>
+    <div class="sec-title"><?= $admin ? 'All Entries' : 'My Entries' ?></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <?php if ($admin): ?>
       <a class="btn-outline" href="topup.php?office=<?= $active_office ?>">＋ Top Up Float</a>
@@ -215,7 +215,7 @@ $total_shown = array_sum(array_column($rows, 'amount'));
       <a class="btn-outline" href="categories.php?office=<?= $active_office ?>">🗂 Categories</a>
       <?php endif; ?>
       <?php if ($admin || $user_office): ?>
-      <a class="btn-primary" href="request.php?office=<?= $active_office ?>">＋ New Request</a>
+      <a class="btn-primary" href="request.php?office=<?= $active_office ?>">＋ New Entry</a>
       <?php endif; ?>
     </div>
   </div>
@@ -252,7 +252,7 @@ $total_shown = array_sum(array_column($rows, 'amount'));
   <!-- Table -->
   <div class="table-wrap">
   <?php if (empty($rows)): ?>
-    <div class="empty">No requests found.</div>
+    <div class="empty">No entries found.</div>
   <?php else: ?>
   <table class="req-table">
     <thead><tr>
@@ -302,7 +302,7 @@ $total_shown = array_sum(array_column($rows, 'amount'));
     </tbody>
     <?php if ($admin && count($rows) > 1): ?>
     <tfoot><tr class="total-row">
-      <?php $colspan = 3; ?><td colspan="<?= $colspan ?>">Total (<?= count($rows) ?> requests)</td>
+      <?php $colspan = 3; ?><td colspan="<?= $colspan ?>">Total (<?= count($rows) ?> entries)</td>
       <td class="amt"><?= $cur ?> <?= number_format($total_shown,2) ?></td>
       <td colspan="<?= $admin ? 4 : 3 ?>"></td>
     </tr></tfoot>

@@ -69,11 +69,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = trim(strip_tags($_POST['category'] ?? ''));
     $desc     = trim(strip_tags($_POST['description'] ?? ''));
 
+    $receipt_provided = !empty($_FILES['receipt']['name']) && $_FILES['receipt']['error'] === UPLOAD_ERR_OK;
     if ($amount <= 0 || !$category || !$desc) {
         $error = 'Please fill in all required fields.';
+    } elseif (!$receipt_provided) {
+        $error = 'A receipt is required. Please upload the receipt before submitting.';
     } else {
         $receipt = null;
-        if (!empty($_FILES['receipt']['name'])) {
+        if ($receipt_provided) {
             $ext = strtolower(pathinfo($_FILES['receipt']['name'], PATHINFO_EXTENSION));
             if (in_array($ext, ['pdf','jpg','jpeg','png']) && $_FILES['receipt']['size'] <= 5*1024*1024) {
                 $dir = __DIR__ . '/../../storage/petty-cash/';
@@ -99,8 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $admins = db()->query("SELECT email FROM users WHERE role IN ('finance_admin','it_admin') AND email != ''")->fetchAll();
             $admin_emails = array_column($admins, 'email');
             if ($admin_emails) {
-                $subject = "[{$cur}] Petty Cash Request — {$user['name']} ({$cur} " . number_format($amount,2) . ")";
-                $body    = "New petty cash request from {$user['name']}.\n\nOffice: " . OFFICES[$office]['label'] . "\nAmount: {$cur} " . number_format($amount,2) . "\nCategory: {$category}\nDescription: {$desc}\n\nLogin to G2 Tools to approve.\n";
+                $subject = "[{$cur}] Petty Cash Entry — {$user['name']} ({$cur} " . number_format($amount,2) . ")";
+                $body    = "New petty cash entry from {$user['name']}.\n\nOffice: " . OFFICES[$office]['label'] . "\nAmount: {$cur} " . number_format($amount,2) . "\nCategory: {$category}\nDescription: {$desc}\n\nLogin to G2 Tools to review.\n";
                 @mail(implode(', ', $admin_emails), $subject, $body, "From: G2 Tools <noreply@g2group.com>\r\n");
             }
             $success = true;
@@ -116,7 +119,7 @@ if (!$categories) $categories = ['Transport','Meals & Entertainment','Office Sup
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>New Petty Cash Request — G2 Tools</title>
+<title>New Petty Cash Entry — G2 Tools</title>
 <link rel="stylesheet" href="/sidebar.css">
 <link rel="stylesheet" href="/form.css">
 </head>
@@ -125,23 +128,23 @@ if (!$categories) $categories = ['Transport','Meals & Entertainment','Office Sup
 <div class="main-content">
 <div class="topbar">
   <a class="topbar-back" href="index.php?office=<?= $office ?>">← <?= htmlspecialchars(OFFICES[$office]['label']) ?></a>
-  <span class="topbar-title">New Request</span>
+  <span class="topbar-title">New Entry</span>
 </div>
 <div class="form-page-wrap">
 <div class="form-card" style="max-width:540px">
   <?php if ($success): ?>
   <div style="padding:48px 40px;text-align:center">
     <div style="font-size:48px;margin-bottom:16px">✅</div>
-    <div style="font-size:20px;font-weight:800;margin-bottom:8px">Request Submitted</div>
-    <div style="font-size:14px;color:#888;margin-bottom:28px">Finance admin has been notified and will review your request.</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:8px">Entry Submitted</div>
+    <div style="font-size:14px;color:#888;margin-bottom:28px">Finance admin has been notified and will review your entry.</div>
     <div style="display:flex;gap:10px;justify-content:center">
-      <a href="request.php?office=<?= $office ?>" style="padding:10px 20px;background:#FF3D33;color:#fff;border-radius:30px;font-size:13px;font-weight:700;text-decoration:none">New Request</a>
-      <a href="index.php?office=<?= $office ?>" style="padding:10px 20px;background:#f6f7f9;color:#555;border-radius:30px;font-size:13px;font-weight:600;text-decoration:none">My Requests</a>
+      <a href="request.php?office=<?= $office ?>" style="padding:10px 20px;background:#FF3D33;color:#fff;border-radius:30px;font-size:13px;font-weight:700;text-decoration:none">New Entry</a>
+      <a href="index.php?office=<?= $office ?>" style="padding:10px 20px;background:#f6f7f9;color:#555;border-radius:30px;font-size:13px;font-weight:600;text-decoration:none">My Entries</a>
     </div>
   </div>
   <?php else: ?>
   <div class="form-header">
-    <div class="fh-text"><h1>Petty Cash Request</h1><p>Submit a reimbursement request for a cash expense</p></div>
+    <div class="fh-text"><h1>New Petty Cash Entry</h1><p>Submit a reimbursement entry for a cash expense</p></div>
     <div class="fh-accent">💸</div>
   </div>
   <div class="form-accent-bar"></div>
@@ -174,9 +177,9 @@ if (!$categories) $categories = ['Transport','Meals & Entertainment','Office Sup
         <textarea name="description" rows="3" placeholder="Describe what the expense was for…" required><?= htmlspecialchars($_POST['description']??'') ?></textarea>
       </div>
       <div class="field">
-        <label class="field-label">Receipt <span style="font-size:11px;color:#aaa">(PDF, JPG or PNG, max 5MB)</span></label>
+        <label class="field-label">Receipt <span style="color:#FF3D33">*</span> <span style="font-size:11px;color:#aaa">(PDF, JPG or PNG, max 5MB)</span></label>
         <label style="display:flex;align-items:center;gap:10px;border:2px dashed #e8eaee;border-radius:8px;padding:14px 16px;cursor:pointer" id="rl">
-          <input type="file" name="receipt" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="document.getElementById('rl').querySelector('span').textContent=this.files[0]?.name||'Click to upload receipt'">
+          <input type="file" name="receipt" accept=".pdf,.jpg,.jpeg,.png" required style="display:none" onchange="document.getElementById('rl').querySelector('span').textContent=this.files[0]?.name||'Click to upload receipt'">
           <span style="font-size:13px;color:#aaa">Click to upload receipt</span>
         </label>
       </div>

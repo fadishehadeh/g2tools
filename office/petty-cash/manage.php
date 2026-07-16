@@ -27,19 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db()->prepare("UPDATE petty_cash_requests SET status='approved',admin_note=?,reviewed_by=?,reviewed_at=NOW() WHERE id=?")
            ->execute([$note, $user['id'], $id]);
         if ($req['uemail'])
-            @mail($req['uemail'], 'Petty Cash Request Approved',
-                "Hi {$req['uname']},\n\nYour request for {$cur} " . number_format($req['amount'],2) . " ({$req['category']}) was approved.\nYou will be notified when cash is ready.\n\nG2 Tools",
+            @mail($req['uemail'], 'Petty Cash Entry Approved',
+                "Hi {$req['uname']},\n\nYour entry for {$cur} " . number_format($req['amount'],2) . " ({$req['category']}) was approved.\nYou will be notified when cash is ready.\n\nG2 Tools",
                 "From: G2 Tools <noreply@g2group.com>\r\n");
-        $msg = 'Request approved.';
+        $msg = 'Entry approved.';
 
     } elseif ($action === 'reject' && $req['status'] === 'pending') {
         db()->prepare("UPDATE petty_cash_requests SET status='rejected',admin_note=?,reviewed_by=?,reviewed_at=NOW() WHERE id=?")
            ->execute([$note, $user['id'], $id]);
         if ($req['uemail'])
-            @mail($req['uemail'], 'Petty Cash Request Declined',
-                "Hi {$req['uname']},\n\nYour request for {$cur} " . number_format($req['amount'],2) . " was declined.\nReason: {$note}\n\nG2 Tools",
+            @mail($req['uemail'], 'Petty Cash Entry Declined',
+                "Hi {$req['uname']},\n\nYour entry for {$cur} " . number_format($req['amount'],2) . " was declined.\nReason: {$note}\n\nG2 Tools",
                 "From: G2 Tools <noreply@g2group.com>\r\n");
-        $msg = 'Request rejected.';
+        $msg = 'Entry rejected.';
 
     } elseif ($action === 'pay' && $req['status'] === 'approved') {
         if ($float < $req['amount']) {
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Review Request — G2 Tools</title>
+<title>Review Entry — G2 Tools</title>
 <link rel="stylesheet" href="/sidebar.css">
 <link rel="stylesheet" href="/form.css">
 <style>
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="main-content">
 <div class="topbar">
   <a class="topbar-back" href="index.php?office=<?= $office ?>">Petty Cash</a>
-  <span class="topbar-title">Review Request #<?= $id ?></span>
+  <span class="topbar-title">Review Entry #<?= $id ?></span>
 </div>
 <div class="rw">
 
