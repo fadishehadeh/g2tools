@@ -133,6 +133,9 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <a class="sb-item<?= _sb_act('/g2forms/vendor/') ?>" href="/vendor/">
           <span class="sb-icon">🏢</span> Vendor Registration
         </a>
+        <a class="sb-item<?= _sb_act('/g2forms/client/') ?>" href="/client/">
+          <span class="sb-icon">👥</span> Client Registration
+        </a>
       </div>
     </div>
     <?php endif; ?>

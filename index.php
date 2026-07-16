@@ -349,11 +349,11 @@ if (can('assets')) {
   </div>
   <?php endif; ?>
 
-  <!-- ── Vendor Portal ── -->
+  <!-- ── Portals ── -->
   <?php if (is_admin() || can('vendor')): ?>
   <div class="section-wrap" style="margin-top:44px">
     <div class="section-label">
-      <span class="section-label-text">Vendor Portal</span>
+      <span class="section-label-text">Portals</span>
       <div class="section-label-line"></div>
     </div>
     <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px,1fr))">
@@ -366,6 +366,18 @@ if (can('assets')) {
         </div>
         <div class="card-title">Vendor Registration</div>
         <div class="card-desc">External vendors register their company and bank details. No login required — share this link directly with suppliers.</div>
+        <div class="card-foot"><span class="card-tag">Public</span><span class="card-btn">Open ↗</span></div>
+      </a>
+      <a class="card" style="--card-color:#0891b2;--icon-bg:#f0f9ff;--tag-bg:#f0f9ff;--tag-color:#0369a1" href="/client/" target="_blank">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="card-title">Client Registration</div>
+        <div class="card-desc">New clients submit their credit check and registration details. No login required — share this link directly with clients.</div>
         <div class="card-foot"><span class="card-tag">Public</span><span class="card-btn">Open ↗</span></div>
       </a>
     </div>
