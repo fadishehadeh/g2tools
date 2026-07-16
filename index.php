@@ -4,9 +4,7 @@ require 'config.php';
 require_login();
 $user = current_user();
 
-if (is_admin()) {
-    header('Location: /admin/dashboard.php'); exit;
-}
+header('Location: /dashboard.php'); exit;
 
 // Asset stats for hero + card
 $asset_stats = null;
