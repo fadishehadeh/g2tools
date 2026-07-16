@@ -116,7 +116,7 @@ $attention = db()->query("SELECT a.*, c.icon cat_icon
 
   <div class="ph">
     <h1>Asset Dashboard</h1>
-    <?php if (is_it_admin()): ?>
+    <?php if (is_it_admin() || is_admin()): ?>
     <a class="btn-new" href="add.php">+ Add Asset</a>
     <?php endif; ?>
   </div>
@@ -152,7 +152,7 @@ $attention = db()->query("SELECT a.*, c.icon cat_icon
   <!-- Quick nav -->
   <div class="qnav">
     <a class="qn" href="list.php">📋 All Assets</a>
-    <?php if (is_it_admin()): ?>
+    <?php if (is_it_admin() || is_admin()): ?>
     <a class="qn" href="add.php">➕ Add Asset</a>
     <a class="qn" href="import.php">⬆ Bulk Import</a>
     <a class="qn" href="qr-labels.php">🔲 QR Labels</a>

@@ -5,7 +5,7 @@ require_login();
 require_it_admin_or_superadmin();
 
 function require_it_admin_or_superadmin(): void {
-    if (!is_it_admin()) { header('Location: /assets/'); exit; }
+    if (!is_it_admin() && !is_admin()) { header('Location: /assets/'); exit; }
 }
 
 $error = '';
