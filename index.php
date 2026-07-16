@@ -184,7 +184,11 @@ if (can('assets')) {
     </div>
   </div>
 
+  <?php $has_finance_cards = can('finance_cc')||can('finance_accountability')||can('finance_debit_note')||can('finance_credit_note')||can('finance_vendor_recon'); ?>
+  <?php $has_office_cards = can('petty_cash_doha')||can('petty_cash_beirut')||can('petty_cash')||is_admin(); ?>
+
   <!-- ── Finance ── -->
+  <?php if (is_admin() || $has_finance_cards): ?>
   <div class="section-wrap">
     <div class="section-label">
       <span class="section-label-text">Finance</span>
@@ -192,6 +196,7 @@ if (can('assets')) {
     </div>
     <div class="cards-grid">
 
+      <?php if (is_admin() || can('finance_cc')): ?>
       <a class="card card-finance" href="/amex/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#FF3D33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -200,12 +205,11 @@ if (can('assets')) {
         </div>
         <div class="card-title">Credit Card Authorization</div>
         <div class="card-desc">Request authorization to use the company AMEX card for a billable or non-billable expense.</div>
-        <div class="card-foot">
-          <span class="card-tag">AMEX</span>
-          <span class="card-btn">Open →</span>
-        </div>
+        <div class="card-foot"><span class="card-tag">AMEX</span><span class="card-btn">Open →</span></div>
       </a>
+      <?php endif; ?>
 
+      <?php if (is_admin() || can('finance_accountability')): ?>
       <a class="card card-hr" href="/accountability/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -215,28 +219,25 @@ if (can('assets')) {
         </div>
         <div class="card-title">Accountability for Company Property</div>
         <div class="card-desc">Acknowledge receipt and responsibility for equipment or property issued to you.</div>
-        <div class="card-foot">
-          <span class="card-tag">HR / Admin</span>
-          <span class="card-btn">Open →</span>
-        </div>
+        <div class="card-foot"><span class="card-tag">HR / Admin</span><span class="card-btn">Open →</span></div>
       </a>
+      <?php endif; ?>
 
+      <?php if (is_admin() || can('finance_debit_note')): ?>
       <a class="card card-finance" href="/finance/debit-note/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#FF3D33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/>
-            <line x1="12" y1="12" x2="12" y2="18"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="12" y1="12" x2="12" y2="18"/>
           </svg>
         </div>
         <div class="card-title">Debit Note</div>
         <div class="card-desc">Generate a debit note to charge a vendor's account for agreed amounts.</div>
-        <div class="card-foot">
-          <span class="card-tag">Finance</span>
-          <span class="card-btn">Open →</span>
-        </div>
+        <div class="card-foot"><span class="card-tag">Finance</span><span class="card-btn">Open →</span></div>
       </a>
+      <?php endif; ?>
 
+      <?php if (is_admin() || can('finance_credit_note')): ?>
       <a class="card card-finance" href="/finance/credit-note/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#FF3D33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -246,31 +247,29 @@ if (can('assets')) {
         </div>
         <div class="card-title">Credit Note</div>
         <div class="card-desc">Generate a credit note to credit a vendor's account after an adjustment.</div>
-        <div class="card-foot">
-          <span class="card-tag">Finance</span>
-          <span class="card-btn">Open →</span>
-        </div>
+        <div class="card-foot"><span class="card-tag">Finance</span><span class="card-btn">Open →</span></div>
       </a>
+      <?php endif; ?>
 
+      <?php if (is_admin() || can('finance_vendor_recon')): ?>
       <a class="card card-finance" href="/finance/vendor-recon/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#FF3D33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
-            <line x1="6" y1="20" x2="6" y2="14"/>
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
           </svg>
         </div>
         <div class="card-title">Vendor Payable Reconciliation</div>
         <div class="card-desc">Reconcile vendor payable balances against Grey SOA and identify variances.</div>
-        <div class="card-foot">
-          <span class="card-tag">Finance</span>
-          <span class="card-btn">Open →</span>
-        </div>
+        <div class="card-foot"><span class="card-tag">Finance</span><span class="card-btn">Open →</span></div>
       </a>
+      <?php endif; ?>
 
     </div>
   </div>
+  <?php endif; ?>
 
   <!-- ── Office ── -->
+  <?php if (is_admin() || $has_office_cards): ?>
   <div class="section-wrap" style="margin-top:44px">
     <div class="section-label">
       <span class="section-label-text">Office</span>
@@ -278,6 +277,7 @@ if (can('assets')) {
     </div>
     <div class="cards-grid">
 
+      <?php if (is_admin() || can('petty_cash_doha') || can('petty_cash')): ?>
       <a class="card card-office" href="/office/petty-cash/?office=doha">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -287,12 +287,11 @@ if (can('assets')) {
         </div>
         <div class="card-title">Petty Cash — Doha 🇶🇦</div>
         <div class="card-desc">Submit and manage petty cash requests for the Doha office. Tracked in QAR.</div>
-        <div class="card-foot">
-          <span class="card-tag">QAR</span>
-          <span class="card-btn">Open →</span>
-        </div>
+        <div class="card-foot"><span class="card-tag">QAR</span><span class="card-btn">Open →</span></div>
       </a>
+      <?php endif; ?>
 
+      <?php if (is_admin() || can('petty_cash_beirut') || can('petty_cash')): ?>
       <a class="card" style="--card-color:#7c3aed;--icon-bg:#f5f3ff;--tag-bg:#f5f3ff;--tag-color:#7c3aed" href="/office/petty-cash/?office=beirut">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -302,12 +301,11 @@ if (can('assets')) {
         </div>
         <div class="card-title">Petty Cash — Beirut 🇱🇧</div>
         <div class="card-desc">Submit and manage petty cash requests for the Beirut office. Tracked in USD.</div>
-        <div class="card-foot">
-          <span class="card-tag">USD</span>
-          <span class="card-btn">Open →</span>
-        </div>
+        <div class="card-foot"><span class="card-tag">USD</span><span class="card-btn">Open →</span></div>
       </a>
+      <?php endif; ?>
 
+      <?php if (is_admin()): ?>
       <a class="card card-pantry" href="/office/pantry/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -316,65 +314,49 @@ if (can('assets')) {
         </div>
         <div class="card-title">Pantry Control</div>
         <div class="card-desc">Monitor pantry stock levels in real time. Get instant alerts when items run low.</div>
-        <div class="card-foot">
-          <span class="card-tag">Office</span>
-          <span class="card-btn">Open →</span>
-        </div>
+        <div class="card-foot"><span class="card-tag">Office</span><span class="card-btn">Open →</span></div>
       </a>
+      <?php endif; ?>
 
     </div>
   </div>
+  <?php endif; ?>
 
   <!-- ── Assets ── -->
-  <?php if ($asset_stats): ?>
+  <?php if ($asset_stats && (is_admin() || can('assets'))): ?>
   <div class="section-wrap" style="margin-top:44px">
     <div class="section-label">
       <span class="section-label-text">Asset Management</span>
       <div class="section-label-line"></div>
     </div>
     <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px,1fr))">
-
       <a class="card card-assets" href="/assets/">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2"/>
-            <path d="M8 21h8M12 17v4"/>
+            <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
           </svg>
         </div>
         <div class="card-title">Asset Management</div>
         <div class="card-desc">Track company equipment, manage assignments, depreciation schedules, disposals, and transfers across all offices.</div>
         <div class="card-mini-stats">
-          <div class="cms-item">
-            <div class="cms-val"><?= $asset_stats['total'] ?></div>
-            <div class="cms-lbl">Total Assets</div>
-          </div>
-          <div class="cms-item">
-            <div class="cms-val" style="color:#16a34a"><?= $asset_stats['active'] ?></div>
-            <div class="cms-lbl">Active</div>
-          </div>
-          <div class="cms-item">
-            <div class="cms-val" style="font-size:14px">QAR <?= number_format($asset_stats['total_value'] / 1000, 1) ?>k</div>
-            <div class="cms-lbl">Total Value</div>
-          </div>
+          <div class="cms-item"><div class="cms-val"><?= $asset_stats['total'] ?></div><div class="cms-lbl">Total Assets</div></div>
+          <div class="cms-item"><div class="cms-val" style="color:#16a34a"><?= $asset_stats['active'] ?></div><div class="cms-lbl">Active</div></div>
+          <div class="cms-item"><div class="cms-val" style="font-size:14px">QAR <?= number_format($asset_stats['total_value']/1000,1) ?>k</div><div class="cms-lbl">Total Value</div></div>
         </div>
-        <div class="card-foot" style="margin-top:14px">
-          <span class="card-tag">IT / Admin</span>
-          <span class="card-btn">Open →</span>
-        </div>
+        <div class="card-foot" style="margin-top:14px"><span class="card-tag">IT / Admin</span><span class="card-btn">Open →</span></div>
       </a>
-
     </div>
   </div>
   <?php endif; ?>
 
   <!-- ── Vendor Portal ── -->
+  <?php if (is_admin() || can('vendor')): ?>
   <div class="section-wrap" style="margin-top:44px">
     <div class="section-label">
       <span class="section-label-text">Vendor Portal</span>
       <div class="section-label-line"></div>
     </div>
     <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px,1fr))">
-
       <a class="card card-vendor" href="/vendor/" target="_blank">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -384,14 +366,11 @@ if (can('assets')) {
         </div>
         <div class="card-title">Vendor Registration</div>
         <div class="card-desc">External vendors register their company and bank details. No login required — share this link directly with suppliers.</div>
-        <div class="card-foot">
-          <span class="card-tag">Public</span>
-          <span class="card-btn">Open ↗</span>
-        </div>
+        <div class="card-foot"><span class="card-tag">Public</span><span class="card-btn">Open ↗</span></div>
       </a>
-
     </div>
   </div>
+  <?php endif; ?>
 
   <div class="home-footer">
     <div style="display:flex;align-items:center;gap:10px">
