@@ -178,5 +178,21 @@ $stmt=db()->prepare("INSERT INTO form_submissions (user_id,form_type,form_data,p
 $stmt->execute([$uid,'vendor_recon',$form_data,$filename]);
 $sub_id=db()->lastInsertId();
 
+require_once '../../mailer.php';
+$fin_emails = get_finance_emails();
+if ($fin_emails && file_exists($filepath)) {
+    $subj = "New Vendor Recon — {$vendor_name} [#{$sub_id}]";
+    $html = mail_template("New Vendor Payable Reconciliation", "
+        <p>A new Vendor Payable Reconciliation has been submitted and requires your approval.</p>
+        <div class='info-box'><strong>Reference</strong> #$sub_id</div>
+        <div class='info-box'><strong>Vendor</strong> " . htmlspecialchars($vendor_name) . "</div>
+        <div class='info-box'><strong>Submitted By</strong> " . htmlspecialchars(current_user()['name'] ?? '') . "</div>
+        <a class='btn' href='https://g2tools.greydoha.com/admin/submission-view.php?id=$sub_id'>Review &amp; Approve</a>
+    ");
+    foreach ($fin_emails as $to_email) {
+        send_mail_with_attachment($to_email, $subj, $html, $filepath, $filename);
+    }
+}
+
 header('Location: /finance/confirm.php?id='.$sub_id);
 exit;

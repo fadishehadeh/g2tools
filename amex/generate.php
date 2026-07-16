@@ -314,6 +314,26 @@ $stmt = db()->prepare("INSERT INTO form_submissions (user_id, form_type, form_da
 $stmt->execute([$uid, 'amex', $form_data, $filename]);
 $sub_id = db()->lastInsertId();
 
+// Email finance admins with PDF attached
+require_once '../mailer.php';
+$fin_emails = get_finance_emails();
+if ($fin_emails && file_exists($filepath)) {
+    $merchant   = $_SESSION['amex_data']['merchant'] ?? '';
+    $amount_str = ($_SESSION['amex_data']['amount'] ?? '') . ' ' . ($_SESSION['amex_data']['currency'] ?? '');
+    $subj = "New Credit Card Auth — {$merchant} ({$amount_str}) [#{$sub_id}]";
+    $html = mail_template("New Credit Card Authorization", "
+        <p>A new Credit Card Authorization form has been submitted and requires your approval.</p>
+        <div class='info-box'><strong>Reference</strong> #$sub_id</div>
+        <div class='info-box'><strong>Merchant</strong> " . htmlspecialchars($merchant) . "</div>
+        <div class='info-box'><strong>Amount</strong> " . htmlspecialchars($amount_str) . "</div>
+        <div class='info-box'><strong>Submitted By</strong> " . htmlspecialchars(current_user()['name'] ?? '') . "</div>
+        <a class='btn' href='https://g2tools.greydoha.com/admin/submission-view.php?id=$sub_id'>Review &amp; Approve</a>
+    ");
+    foreach ($fin_emails as $to) {
+        send_mail_with_attachment($to, $subj, $html, $filepath, $filename);
+    }
+}
+
 // Clean up temp GIF conversion if used
 if (isset($tmpLogo) && file_exists($tmpLogo)) @unlink($tmpLogo);
 

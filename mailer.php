@@ -56,6 +56,60 @@ function send_mail($to, string $subject, string $html, string $text = ''): bool 
     return $httpCode === 200;
 }
 
+/**
+ * Send an email with a single file attachment via Mailjet.
+ *
+ * @param string|array $to
+ * @param string       $subject
+ * @param string       $html
+ * @param string       $file_path   Absolute path to the file
+ * @param string       $file_name   Filename to show in email
+ */
+function send_mail_with_attachment($to, string $subject, string $html, string $file_path, string $file_name): bool {
+    if (is_string($to)) {
+        $to = ['Email' => $to, 'Name' => ''];
+    } else {
+        $to = ['Email' => $to['email'] ?? $to['Email'], 'Name' => $to['name'] ?? $to['Name'] ?? ''];
+    }
+
+    $text = strip_tags(preg_replace('/<(br|p|li|tr)[^>]*>/i', "\n", $html));
+
+    $msg = [
+        'From'     => ['Email' => MJ_FROM_EMAIL, 'Name' => MJ_FROM_NAME],
+        'To'       => [$to],
+        'Subject'  => $subject,
+        'HTMLPart' => $html,
+        'TextPart' => $text,
+    ];
+
+    if ($file_path && file_exists($file_path)) {
+        $ext  = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        $mime = $ext === 'pdf' ? 'application/pdf' : 'application/octet-stream';
+        $msg['Attachments'] = [[
+            'ContentType'   => $mime,
+            'Filename'      => $file_name,
+            'Base64Content' => base64_encode(file_get_contents($file_path)),
+        ]];
+    }
+
+    $payload = json_encode(['Messages' => [$msg]]);
+
+    $ch = curl_init('https://api.mailjet.com/v3.1/send');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_USERPWD        => MJ_API_KEY.':'.MJ_API_SECRET,
+        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+        CURLOPT_TIMEOUT        => 15,
+    ]);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    return $httpCode === 200;
+}
+
 /** Branded HTML email wrapper */
 function mail_template(string $title, string $body_html): string {
     return <<<HTML
