@@ -155,6 +155,16 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <a class="sb-item<?= _sb_act('/g2forms/assets/list') ?>" href="/assets/list.php">
           <span class="sb-icon">📋</span> All Assets
         </a>
+        <?php
+          $_ar_q = db()->query("SELECT COUNT(*) FROM asset_requests WHERE status='pending'");
+          $_ar_pending = $_ar_q ? (int)$_ar_q->fetchColumn() : 0;
+        ?>
+        <a class="sb-item<?= _sb_act('/g2forms/assets/request') ?>" href="/assets/requests.php">
+          <span class="sb-icon">📥</span> Asset Requests
+          <?php if ($_ar_pending > 0): ?>
+          <span style="background:#FF3D33;color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:auto"><?= $_ar_pending ?></span>
+          <?php endif; ?>
+        </a>
         <?php if (is_it_admin()): ?>
         <a class="sb-item<?= _sb_act('/g2forms/assets/add') ?>" href="/assets/add.php">
           <span class="sb-icon">➕</span> Add Asset
