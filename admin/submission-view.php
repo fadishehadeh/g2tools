@@ -59,93 +59,214 @@ if (isset($_GET['done'])) {
 }
 
 // ── Field label maps per form type ───────────────────────────────────────────
+// $field_groups: ['Section Title' => ['db_key' => 'Label', ...]]
+// $line_items: array of rows to render as a table, or null
 $field_groups = [];
+$line_items   = null; // ['headers'=>[], 'rows'=>[[],...]]
+
 switch ($sub['form_type']) {
+
     case 'amex':
         $field_groups = [
-            'Request Details' => [
-                'serial_number'=>'Serial Number','co_name'=>'Company','dept'=>'Department',
-                'merchant'=>'Merchant / Payee','amount'=>'Amount','currency'=>'Currency',
-                'purpose'=>'Purpose','date'=>'Date','card_last4'=>'Card (last 4)',
+            'Card & Request' => [
+                'company'          => 'Company',
+                'cardholder_name'  => 'Cardholder Name',
+                'card_type'        => 'Card Type',
+                'card_last4'       => 'Card (last 4)',
+                'merchant'         => 'Merchant / Payee',
+                'amount'           => 'Amount',
+                'currency'         => 'Currency',
+                'nature_of_expense'=> 'Nature of Expense',
+                'po_number'        => 'PO Number',
+                'client_name'      => 'Client Name',
+                'billable'         => 'Billable',
             ],
-            'Submitted By' => ['name'=>'Name','position'=>'Position'],
+            'Authorization' => [
+                'authorized_name'  => 'Authorized By',
+                'mgmt_approval'    => 'Management Approval',
+                'mgmt_date'        => 'Management Approval Date',
+                'finance_approval' => 'Finance Approval',
+                'finance_date'     => 'Finance Approval Date',
+            ],
         ];
         break;
+
     case 'accountability':
         $field_groups = [
             'Item Details' => [
-                'item_name'=>'Item','quantity'=>'Quantity','unit_price'=>'Unit Price',
-                'total'=>'Total','currency'=>'Currency','received_by'=>'Received By',
-                'dept'=>'Department','date'=>'Date','notes'=>'Notes',
+                'item_name'   => 'Item',
+                'quantity'    => 'Quantity',
+                'unit_price'  => 'Unit Price',
+                'total'       => 'Total',
+                'currency'    => 'Currency',
+                'received_by' => 'Received By',
+                'dept'        => 'Department',
+                'date'        => 'Date',
+                'notes'       => 'Notes',
             ],
         ];
         break;
+
     case 'debit_note':
     case 'credit_note':
-        $label = $sub['form_type'] === 'debit_note' ? 'Debit Note' : 'Credit Note';
+        $dn_label = $sub['form_type'] === 'debit_note' ? 'Debit Note' : 'Credit Note';
         $field_groups = [
-            "$label Details" => [
-                'co_name'=>'Company','to_name'=>'To','to_address'=>'Address',
-                'ref_number'=>'Reference No.','date'=>'Date','due_date'=>'Due Date',
-                'amount'=>'Amount','currency'=>'Currency','description'=>'Description','notes'=>'Notes',
+            $dn_label . ' Details' => [
+                'company'      => 'Company',
+                'to_name'      => 'To',
+                'attention'    => 'Attention',
+                'dn_date'      => 'Date',
+                'currency'     => 'Currency',
+                'total'        => 'Total Amount',
+                'prepared_by'  => 'Prepared By',
+                'approved_by'  => 'Approved By',
+            ],
+            'Attachments' => [
+                'attach_invoice'  => 'Invoice Attached',
+                'attach_email'    => 'Email Attached',
+                'attach_contract' => 'Contract Attached',
             ],
         ];
+        // Line items
+        if (!empty($fd['desc']) && is_array($fd['desc'])) {
+            $rows = [];
+            foreach ($fd['desc'] as $i => $desc) {
+                if (trim($desc) === '') continue;
+                $rows[] = [
+                    $i + 1,
+                    $desc,
+                    $fd['amt'][$i] ?? '',
+                ];
+            }
+            if ($rows) $line_items = ['headers' => ['#', 'Description', 'Amount'], 'rows' => $rows];
+        }
         break;
+
     case 'vendor_recon':
         $field_groups = [
-            'Reconciliation Details' => [
-                'co_name'=>'Company','vendor_name'=>'Vendor','vendor_account'=>'Account No.',
-                'period_from'=>'Period From','period_to'=>'Period To',
-                'our_balance'=>'Our Balance','vendor_balance'=>'Vendor Balance',
-                'difference'=>'Difference','currency'=>'Currency','notes'=>'Notes',
+            'Reconciliation Header' => [
+                'company'             => 'Company',
+                'vendor_name'         => 'Vendor Name',
+                'vendor_no'           => 'Vendor No.',
+                'recon_date'          => 'Recon Date',
+                'grey_soa_balance'    => 'Grey SOA Balance',
+                'vendor_soa_balance'  => 'Vendor SOA Balance',
+                'net_grey'            => 'Net (Grey)',
+                'total_recon'         => 'Total Reconciled',
+                'variance'            => 'Variance',
+                'prepared_by'         => 'Prepared By',
+                'reviewed_by'         => 'Reviewed By',
+                'approved_by'         => 'Approved By',
             ],
         ];
+        // Line items
+        if (!empty($fd['r_inv']) && is_array($fd['r_inv'])) {
+            $rows = [];
+            foreach ($fd['r_inv'] as $i => $inv) {
+                if (trim($inv) === '' && trim($fd['r_particular'][$i] ?? '') === '') continue;
+                $rows[] = [
+                    $fd['r_date'][$i]       ?? '',
+                    $inv,
+                    $fd['r_po'][$i]         ?? '',
+                    $fd['r_particular'][$i] ?? '',
+                    $fd['r_amt'][$i]        ?? '',
+                ];
+            }
+            if ($rows) $line_items = ['headers' => ['Date', 'Invoice No.', 'PO No.', 'Particular', 'Amount'], 'rows' => $rows];
+        }
         break;
+
     case 'vendor_reg':
         $field_groups = [
             'Company Information' => [
-                'legal_name'=>'Legal Name','trade_name'=>'Trade Name','address'=>'Address',
-                'city'=>'City','country'=>'Country','po_box'=>'P.O. Box',
-                'website'=>'Website','industry'=>'Industry','year_established'=>'Year Est.',
+                'legal_name'   => 'Legal Name',
+                'aka_name'     => 'Also Known As',
+                'co_reg_no'    => 'Registration No.',
+                'tax_no'       => 'Tax / VAT No.',
+                'icv_score'    => 'ICV Score',
+                'city'         => 'City',
+                'state'        => 'State / Region',
+                'zip_code'     => 'ZIP / Postal Code',
+                'country'      => 'Country',
+                'annual_spend' => 'Annual Spend',
+                'related_party'=> 'Related Party',
+                'related_party_desc' => 'Related Party Details',
             ],
-            'Contact' => [
-                'contact_name'=>'Contact Name','contact_position'=>'Position',
-                'contact_email'=>'Email','contact_phone'=>'Phone',
+            'Bank Details' => [
+                'bank_name'            => 'Bank Name',
+                'bank_address'         => 'Bank Address',
+                'bank_company_address' => 'Company Address (Bank)',
+                'bank_account_name'    => 'Account Name',
+                'account_number'       => 'Account Number',
+                'iban'                 => 'IBAN',
+                'swift_code'           => 'SWIFT / BIC',
+                'bank_currency'        => 'Currency',
             ],
-            'Financial' => [
-                'bank_name'=>'Bank','iban'=>'IBAN','swift'=>'SWIFT',
-                'vat_number'=>'VAT No.','payment_terms'=>'Payment Terms',
+            'Authorized Representative' => [
+                'rep_name'        => 'Name',
+                'rep_designation' => 'Designation',
+                'rep_email'       => 'Email',
+                'rep_date'        => 'Date',
+            ],
+            'Internal Reference' => [
+                'client_ref_name' => 'Client Reference',
             ],
         ];
         break;
+
     case 'client_reg':
         $field_groups = [
             'Client Information' => [
-                'company_name'=>'Company','company_address'=>'Address','billing_address'=>'Billing Address',
-                'website'=>'Website','industry'=>'Industry','year_trading'=>'Year of Trading',
-                'trade_license_no'=>'Trade License No.','vat_number'=>'VAT No.',
-                'brand_product'=>'Brand / Product','ceo_name'=>'CEO','cfo_name'=>'CFO',
+                'company_name'      => 'Company Name',
+                'company_address'   => 'Company Address',
+                'billing_address'   => 'Billing Address',
+                'website'           => 'Website',
+                'industry'          => 'Industry',
+                'year_trading'      => 'Year of Trading',
+                'trade_license_no'  => 'Trade License No.',
+                'vat_number'        => 'VAT Number',
+                'brand_product'     => 'Brand / Product',
+                'ceo_name'          => 'CEO',
+                'cfo_name'          => 'CFO',
+                'trade_license_file'=> 'Trade License Upload',
             ],
             'Client Servicing Contact' => [
-                'cs_name'=>'Name','cs_position'=>'Position','cs_email'=>'Email','cs_phone'=>'Phone',
+                'cs_name'     => 'Name',
+                'cs_position' => 'Position',
+                'cs_email'    => 'Email',
+                'cs_phone'    => 'Phone',
             ],
-            'Finance Contact' => [
-                'fin_name'=>'Name','fin_position'=>'Position','fin_email'=>'Email','fin_phone'=>'Phone',
+            'Finance Department Contact' => [
+                'fin_name'     => 'Name',
+                'fin_position' => 'Position',
+                'fin_email'    => 'Email',
+                'fin_phone'    => 'Phone',
             ],
-            'Financial & Credit' => [
-                'revenue'=>'Revenue (Last FY)','net_profit'=>'Net Profit Before Tax',
-                'audited_financials'=>'Audited Financials','credit_check_results'=>'Credit Check Results',
-                'credit_limit'=>'Requested Credit Limit','credit_period_days'=>'Credit Period (days)',
-                'related_party_checks'=>'Related-Party Checks',
+            'Financial Results & Credit Check' => [
+                'revenue'              => 'Revenue (Last FY)',
+                'net_profit'           => 'Net Profit Before Tax',
+                'audited_financials'   => 'Audited Financials',
+                'credit_check_results' => 'Credit Check Results',
+                'credit_limit'         => 'Requested Credit Limit',
+                'credit_period_days'   => 'Credit Period (days)',
+                'related_party_checks' => 'Related-Party Checks',
             ],
             'Authorized Representative' => [
-                'rep_name'=>'Name','rep_designation'=>'Designation','rep_date'=>'Date',
+                'rep_name'        => 'Name',
+                'rep_designation' => 'Designation',
+                'rep_date'        => 'Date',
             ],
         ];
         break;
+
     default:
-        // Fallback: show all keys
-        $field_groups = ['Details' => array_combine(array_keys($fd), array_keys($fd))];
+        // Fallback: display every key stored in form_data
+        $all = [];
+        foreach ($fd as $k => $v) {
+            if (is_array($v)) continue;
+            $all[$k] = ucwords(str_replace('_', ' ', $k));
+        }
+        if ($all) $field_groups = ['Form Data' => $all];
 }
 
 $type_labels = [
@@ -248,15 +369,14 @@ textarea:focus{border-color:#FF3D33}
   <!-- Field groups -->
   <?php foreach ($field_groups as $group_name => $fields): ?>
   <?php
-    // Only render group if it has at least one value
     $has_value = false;
-    foreach ($fields as $key => $_) { if (!empty($fd[$key])) { $has_value = true; break; } }
+    foreach ($fields as $key => $_) { if (isset($fd[$key]) && trim((string)$fd[$key]) !== '') { $has_value = true; break; } }
     if (!$has_value) continue;
   ?>
   <div class="field-group">
     <div class="group-title"><?= htmlspecialchars($group_name) ?></div>
     <?php foreach ($fields as $key => $label): ?>
-    <?php $val = trim($fd[$key] ?? ''); if ($val === '') continue; ?>
+    <?php $val = trim((string)($fd[$key] ?? '')); if ($val === '') continue; ?>
     <div class="field-row">
       <div class="field-label"><?= htmlspecialchars($label) ?></div>
       <div class="field-value"><?= nl2br(htmlspecialchars($val)) ?></div>
@@ -264,6 +384,33 @@ textarea:focus{border-color:#FF3D33}
     <?php endforeach; ?>
   </div>
   <?php endforeach; ?>
+
+  <!-- Line items table (debit note, credit note, vendor recon) -->
+  <?php if ($line_items): ?>
+  <div class="field-group">
+    <div class="group-title">Line Items</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr>
+          <?php foreach ($line_items['headers'] as $h): ?>
+          <th style="padding:9px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#aaa;background:#fafafa;border-bottom:1px solid #f0f0f0;white-space:nowrap"><?= htmlspecialchars($h) ?></th>
+          <?php endforeach; ?>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($line_items['rows'] as $r): ?>
+        <tr>
+          <?php foreach ($r as $cell): ?>
+          <td style="padding:10px 16px;border-bottom:1px solid #f8f8f8;color:#333"><?= htmlspecialchars((string)$cell) ?></td>
+          <?php endforeach; ?>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+    </div>
+  </div>
+  <?php endif; ?>
 
   <!-- Approval action (finance admin, pending only) -->
   <?php if (is_finance_admin() && $needs_approval && $status === 'pending'): ?>
