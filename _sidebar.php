@@ -35,6 +35,7 @@ elseif (str_starts_with($_path, '/g2forms/amex/') || str_starts_with($_path, '/g
 elseif (str_starts_with($_path, '/g2forms/vendor/')) $_active_section = 'vendor';
 elseif (str_starts_with($_path, '/g2forms/assets/')) $_active_section = 'assets';
 elseif (str_starts_with($_path, '/g2forms/admin/')) $_active_section = 'admin';
+elseif (str_starts_with($_path, '/admin/')) $_active_section = 'admin';
 elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_section = 'home';
 ?>
 <aside class="sidebar">
@@ -207,6 +208,9 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <?php if (is_superadmin()): ?>
         <a class="sb-item<?= _sb_act('/g2forms/admin/settings') ?>" href="/admin/settings.php">
           <span class="sb-icon">⚙</span> Settings
+        </a>
+        <a class="sb-item<?= _sb_act('/g2forms/admin/dev-tools') ?>" href="/admin/dev-tools.php">
+          <span class="sb-icon">🛠</span> Dev Tools
         </a>
         <?php endif; ?>
       </div>
