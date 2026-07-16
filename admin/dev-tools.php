@@ -2,7 +2,7 @@
 session_start();
 require '../config.php';
 require_login();
-if (!is_superadmin()) { header('Location: /'); exit; }
+if (!is_admin()) { header('Location: /'); exit; }
 
 $msg   = '';
 $mtype = 'ok';

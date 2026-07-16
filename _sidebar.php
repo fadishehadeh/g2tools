@@ -209,10 +209,10 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <a class="sb-item<?= _sb_act('/g2forms/admin/settings') ?>" href="/admin/settings.php">
           <span class="sb-icon">⚙</span> Settings
         </a>
+        <?php endif; ?>
         <a class="sb-item<?= _sb_act('/g2forms/admin/dev-tools') ?>" href="/admin/dev-tools.php">
           <span class="sb-icon">🛠</span> Dev Tools
         </a>
-        <?php endif; ?>
       </div>
     </div>
     <?php endif; ?>
