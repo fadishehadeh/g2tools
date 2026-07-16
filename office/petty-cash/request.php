@@ -149,7 +149,8 @@ if (!$categories) $categories = ['Transport','Meals & Entertainment','Office Sup
   </div>
   <div class="form-accent-bar"></div>
   <?php if ($error): ?>
-  <div style="margin:16px 24px;padding:12px 16px;background:#fff5f5;border:1px solid #fca5a5;border-radius:8px;font-size:13px;color:#dc2626"><?= htmlspecialchars($error) ?></div>
+  <div id="form_error" style="margin:16px 24px;padding:12px 16px;background:#fff5f5;border:1px solid #fca5a5;border-radius:8px;font-size:13px;color:#dc2626">⚠ <?= htmlspecialchars($error) ?></div>
+  <script>document.addEventListener('DOMContentLoaded',()=>document.getElementById('form_error').scrollIntoView({behavior:'smooth',block:'center'}));</script>
   <?php endif; ?>
   <form method="POST" enctype="multipart/form-data">
   <input type="hidden" name="_office" value="<?= htmlspecialchars($office) ?>">
@@ -179,16 +180,37 @@ if (!$categories) $categories = ['Transport','Meals & Entertainment','Office Sup
       <div class="field">
         <label class="field-label">Receipt <span style="color:#FF3D33">*</span> <span style="font-size:11px;color:#aaa">(PDF, JPG or PNG, max 5MB)</span></label>
         <label style="display:flex;align-items:center;gap:10px;border:2px dashed #e8eaee;border-radius:8px;padding:14px 16px;cursor:pointer" id="rl">
-          <input type="file" name="receipt" accept=".pdf,.jpg,.jpeg,.png" required style="display:none" onchange="document.getElementById('rl').querySelector('span').textContent=this.files[0]?.name||'Click to upload receipt'">
-          <span style="font-size:13px;color:#aaa">Click to upload receipt</span>
+          <input type="file" name="receipt" id="receipt_input" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="onReceiptChange(this)">
+          <span style="font-size:13px;color:#aaa" id="receipt_label">Click to upload receipt</span>
         </label>
+        <div id="receipt_error" style="display:none;margin-top:6px;font-size:12px;color:#dc2626;font-weight:600">⚠ Receipt is required. Please upload your receipt before submitting.</div>
       </div>
     </div>
   </div>
   <div class="form-footer">
-    <button type="submit" class="submit-btn">Submit Request</button>
+    <button type="submit" class="submit-btn" onclick="return validateForm()">Submit Entry</button>
   </div>
   </form>
+<script>
+function onReceiptChange(input) {
+  document.getElementById('receipt_label').textContent = input.files[0]?.name || 'Click to upload receipt';
+  document.getElementById('receipt_label').style.color = input.files.length ? '#1a1a1a' : '#aaa';
+  document.getElementById('rl').style.borderColor = '#e8eaee';
+  document.getElementById('receipt_error').style.display = 'none';
+}
+function validateForm() {
+  const receipt = document.getElementById('receipt_input');
+  let valid = true;
+  if (!receipt.files.length) {
+    document.getElementById('rl').style.borderColor = '#dc2626';
+    document.getElementById('rl').style.borderStyle = 'solid';
+    document.getElementById('receipt_error').style.display = 'block';
+    receipt.closest('.field').scrollIntoView({behavior:'smooth', block:'center'});
+    valid = false;
+  }
+  return valid;
+}
+</script>
   <?php endif; ?>
 </div>
 </div>
