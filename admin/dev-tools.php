@@ -343,10 +343,14 @@ if (($_POST['action'] ?? '') === 'purge') {
     }
     $db->exec('SET FOREIGN_KEY_CHECKS=1');
 
-    // Also delete generated PDF files from storage
+    // Delete generated PDF files but keep the directory
     if (in_array($scope, ['all','forms'])) {
         foreach (glob(STORAGE_PATH . '*.pdf') as $f) @unlink($f);
+        if (!is_dir(STORAGE_PATH)) mkdir(STORAGE_PATH, 0755, true);
     }
+    // Keep petty-cash upload dir intact
+    $pc_dir = dirname(STORAGE_PATH) . '/petty-cash/';
+    if (!is_dir($pc_dir)) mkdir($pc_dir, 0755, true);
 
     $msg   = 'Purged: ' . implode(', ', $tables) . '. PDF storage cleared.';
     $mtype = 'warn';
