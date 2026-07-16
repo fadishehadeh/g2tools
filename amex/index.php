@@ -2,6 +2,7 @@
 session_start();
 require '../config.php';
 require_login();
+require_can('finance_cc');
 
 $companies = [
     'g2'  => ['name' => 'G2 Group',       'logo' => '/g2forms/logo.png'],

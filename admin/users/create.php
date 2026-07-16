@@ -6,11 +6,24 @@ require_login();
 if (!is_finance_admin()) { header('Location: /'); exit; }
 
 $error = '';
-$MODULES = [
-    'finance'      => 'Finance Forms (Credit Card, Accountability, Debit/Credit Note, Vendor Recon)',
-    'petty_cash'   => 'Petty Cash',
-    'vendor'       => 'Vendor Registration',
-    'assets'       => 'Asset Management',
+
+// Grouped permissions shown in the create form
+$PERM_GROUPS = [
+    'Finance Forms' => [
+        'finance_cc'             => '💳 Credit Card Auth',
+        'finance_accountability' => '📦 Accountability',
+        'finance_debit_note'     => '📄 Debit Note',
+        'finance_credit_note'    => '📋 Credit Note',
+        'finance_vendor_recon'   => '📊 Vendor Recon',
+    ],
+    'Office — Petty Cash' => [
+        'petty_cash_doha'   => '🇶🇦 Doha (QAR)',
+        'petty_cash_beirut' => '🇱🇧 Beirut (USD)',
+    ],
+    'Other' => [
+        'vendor' => '🏢 Vendor Registration',
+        'assets' => '🖥️ Asset Management',
+    ],
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,7 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Email '$email' is already registered.";
         } else {
             $hash    = password_hash($password, PASSWORD_BCRYPT);
-            $mods    = ($role === 'user') ? json_encode(array_values(array_filter($modules))) : null;
+            // Validate submitted module keys against known permissions
+            $valid_keys = array_keys(array_merge(...array_values($PERM_GROUPS)));
+            $clean_mods = array_values(array_filter($modules, fn($m) => in_array($m, $valid_keys)));
+            $mods = ($role === 'user') ? json_encode($clean_mods) : null;
             // Support both schema versions (with or without username column)
             $cols = array_column(db()->query("DESCRIBE users")->fetchAll(), 'Field');
             if (in_array('username', $cols)) {
@@ -144,17 +160,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <div id="modulesSection" style="display:none;margin-top:4px">
-        <label class="field-label" style="margin-bottom:8px;display:block">Module Access</label>
-        <div class="modules-grid">
-          <?php foreach ($MODULES as $mk => $ml): ?>
-          <div class="mod-item">
-            <input type="checkbox" name="modules[]" value="<?= $mk ?>" id="mod_<?= $mk ?>"
-              onchange="<?= $mk==='petty_cash' ? 'checkOfficeReq()' : '' ?>"
-              <?= in_array($mk, $_POST['modules']??[]) ? 'checked' : '' ?>>
-            <label for="mod_<?= $mk ?>"><?= $ml ?></label>
+        <label class="field-label" style="margin-bottom:8px;display:block">Feature Access</label>
+        <?php foreach ($PERM_GROUPS as $grpLabel => $grpPerms): ?>
+        <div style="margin-bottom:14px">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#aaa;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+            <?= $grpLabel ?>
+            <span onclick="toggleGroup(this)" style="cursor:pointer;font-size:11px;color:#FF3D33;font-weight:600;text-transform:none;letter-spacing:0">All</span>
           </div>
-          <?php endforeach; ?>
+          <div class="modules-grid">
+            <?php foreach ($grpPerms as $mk => $ml): ?>
+            <div class="mod-item">
+              <input type="checkbox" name="modules[]" value="<?= $mk ?>" id="mod_<?= $mk ?>"
+                onchange="checkOfficeReq()"
+                <?= in_array($mk, $_POST['modules']??[]) ? 'checked' : '' ?>>
+              <label for="mod_<?= $mk ?>"><?= $ml ?></label>
+            </div>
+            <?php endforeach; ?>
+          </div>
         </div>
+        <?php endforeach; ?>
       </div>
     </div>
   </div>
@@ -174,11 +198,24 @@ function toggleModules(){
 }
 function checkOfficeReq(){
   const isUser = document.getElementById('roleSelect').value === 'user';
-  const pcChecked = document.getElementById('mod_petty_cash')?.checked;
-  const req = isUser && pcChecked;
-  document.getElementById('officeReq').style.display = req ? 'inline' : 'none';
-  document.getElementById('officeSelect').required = req;
-  document.getElementById('officeField').style.borderColor = req && !document.getElementById('officeSelect').value ? '#fca5a5' : '';
+  const doha   = document.getElementById('mod_petty_cash_doha')?.checked;
+  const beirut = document.getElementById('mod_petty_cash_beirut')?.checked;
+  const req    = isUser && (doha || beirut);
+  // If both selected, no forced office — admin should leave blank (they access via permission)
+  const oneOnly = (doha && !beirut) || (!doha && beirut);
+  document.getElementById('officeReq').style.display = req && oneOnly ? 'inline' : 'none';
+  document.getElementById('officeSelect').required = req && oneOnly;
+  if (doha && !beirut)   document.getElementById('officeSelect').value = 'doha';
+  if (beirut && !doha)   document.getElementById('officeSelect').value = 'beirut';
+  if (!doha && !beirut)  { /* leave as-is */ }
+  if (doha && beirut)    document.getElementById('officeSelect').value = '';
+}
+function toggleGroup(span){
+  const grid = span.closest('div').nextElementSibling;
+  const cbs  = grid.querySelectorAll('input[type=checkbox]');
+  const allChecked = [...cbs].every(c => c.checked);
+  cbs.forEach(c => c.checked = !allChecked);
+  checkOfficeReq();
 }
 toggleModules();
 </script>

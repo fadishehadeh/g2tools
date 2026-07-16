@@ -13,11 +13,18 @@ function _sb_exact(string $path): string {
     return ($path === $_path || $path.'index.php' === $_path) ? ' active' : '';
 }
 
-// Resolve what this user can see
-$_can_finance    = can('finance');
-$_can_petty      = can('petty_cash');
+// Resolve what this user can see (granular)
+$_can_finance    = can_any_finance();
+$_can_petty      = can_any_petty();
 $_can_vendor     = can('vendor');
 $_can_assets     = can('assets');
+$_can_fc         = can('finance_cc');
+$_can_fa         = can('finance_accountability');
+$_can_fdn        = can('finance_debit_note');
+$_can_fcn        = can('finance_credit_note');
+$_can_fvr        = can('finance_vendor_recon');
+$_can_pc_doha    = is_admin() || can('petty_cash_doha')   || can('petty_cash');
+$_can_pc_beirut  = is_admin() || can('petty_cash_beirut') || can('petty_cash');
 $_user_office    = $_u['office'] ?? null;
 if ($_user_office === '') $_user_office = null;
 
@@ -51,17 +58,16 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <span class="sb-chevron">›</span>
       </button>
       <div class="sb-group-body">
-        <?php if (is_admin()): ?>
-          <?php foreach (OFFICES as $_ok => $_ov): ?>
-          <a class="sb-item<?= _sb_act('/g2forms/office/petty-cash/') && ($_GET['office']??'') === $_ok ? ' active' : '' ?>"
-             href="/office/petty-cash/?office=<?= $_ok ?>">
-            <span class="sb-icon">💸</span> Petty Cash <?= $_ov['flag'] ?>
+        <?php if ($_can_pc_doha): ?>
+          <a class="sb-item<?= _sb_act('/g2forms/office/petty-cash/') && ($_GET['office']??'doha')==='doha' ? ' active' : '' ?>"
+             href="/office/petty-cash/?office=doha">
+            <span class="sb-icon">💸</span> Petty Cash 🇶🇦
           </a>
-          <?php endforeach; ?>
-        <?php elseif ($_user_office): ?>
-          <a class="sb-item<?= _sb_act('/g2forms/office/petty-cash/') ? ' active' : '' ?>"
-             href="/office/petty-cash/?office=<?= $_user_office ?>">
-            <span class="sb-icon">💸</span> Petty Cash <?= OFFICES[$_user_office]['flag'] ?? '' ?>
+        <?php endif; ?>
+        <?php if ($_can_pc_beirut): ?>
+          <a class="sb-item<?= _sb_act('/g2forms/office/petty-cash/') && ($_GET['office']??'')==='beirut' ? ' active' : '' ?>"
+             href="/office/petty-cash/?office=beirut">
+            <span class="sb-icon">💸</span> Petty Cash 🇱🇧
           </a>
         <?php endif; ?>
         <a class="sb-item<?= _sb_act('/g2forms/office/pantry/') ?>" href="/office/pantry/">
@@ -80,24 +86,36 @@ elseif ($_path === '/g2forms/' || $_path === '/g2forms/index.php') $_active_sect
         <span class="sb-chevron">›</span>
       </button>
       <div class="sb-group-body">
+        <?php if (is_admin() || $_can_fc): ?>
         <a class="sb-item<?= _sb_act('/g2forms/amex/') ?>" href="/amex/">
           <span class="sb-icon">💳</span> Credit Card Auth
         </a>
+        <?php endif; ?>
+        <?php if (is_admin() || $_can_fa): ?>
         <a class="sb-item<?= _sb_act('/g2forms/accountability/') ?>" href="/accountability/">
           <span class="sb-icon">📦</span> Accountability
         </a>
+        <?php endif; ?>
+        <?php if (is_admin() || $_can_fdn): ?>
         <a class="sb-item<?= _sb_act('/g2forms/finance/debit-note/') ?>" href="/finance/debit-note/">
           <span class="sb-icon">📄</span> Debit Note
         </a>
+        <?php endif; ?>
+        <?php if (is_admin() || $_can_fcn): ?>
         <a class="sb-item<?= _sb_act('/g2forms/finance/credit-note/') ?>" href="/finance/credit-note/">
           <span class="sb-icon">📋</span> Credit Note
         </a>
+        <?php endif; ?>
+        <?php if (is_admin() || $_can_fvr): ?>
         <a class="sb-item<?= _sb_act('/g2forms/finance/vendor-recon/') ?>" href="/finance/vendor-recon/">
           <span class="sb-icon">📊</span> Vendor Recon
         </a>
+        <?php endif; ?>
+        <?php if ($_can_finance): ?>
         <a class="sb-item<?= _sb_exact('/g2forms/history.php') ?>" href="/history.php">
           <span class="sb-icon">☰</span> My Submissions
         </a>
+        <?php endif; ?>
       </div>
     </div>
     <?php endif; ?>

@@ -7,16 +7,15 @@ $user = current_user();
 $user_office = $user['office'] ?? null;
 if ($user_office === '') $user_office = null;
 
-// Office is always determined by URL param (entry point) or user assignment — never a form dropdown
 $office = $_GET['office'] ?? $_POST['_office'] ?? $user_office ?? null;
 if (!array_key_exists($office, OFFICES)) $office = null;
-if (!$office && !is_admin()) {
-    header('Location: index.php'); exit;
-}
-if (!$office) $office = 'doha'; // admin with no office param defaults to doha
-// Non-admin staff must use their assigned office
-if (!is_admin() && $office !== $user_office) {
-    $office = $user_office;
+if (!$office && !is_admin()) { header('Location: index.php'); exit; }
+if (!$office) $office = 'doha';
+if (!is_admin() && $office !== $user_office) $office = $user_office;
+
+// Gate: must have access to this office's petty cash
+if (!is_admin() && !can('petty_cash_'.$office) && !can('petty_cash')) {
+    header('Location: /'); exit;
 }
 
 $error   = '';

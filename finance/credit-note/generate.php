@@ -2,6 +2,7 @@
 session_start();
 require '../../config.php';
 require_login();
+require_can('finance_credit_note');
 require '../../amex/lib/fpdf.php';
 
 function s($k) { return isset($_POST[$k]) ? trim(strip_tags($_POST[$k])) : ''; }

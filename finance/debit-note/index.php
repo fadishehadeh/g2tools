@@ -2,6 +2,7 @@
 session_start();
 require '../../config.php';
 require_login();
+require_can('finance_debit_note');
 ?><!DOCTYPE html>
 <html lang="en">
 <head>

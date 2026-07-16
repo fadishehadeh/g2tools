@@ -11,7 +11,12 @@ if ($admin) {
     $active_office = $_GET['office'] ?? $user_office ?? 'doha';
     if (!array_key_exists($active_office, OFFICES)) $active_office = 'doha';
 } else {
-    $active_office = $user_office;
+    $active_office = $user_office ?? 'doha';
+}
+
+// Gate: user must have access to this specific office's petty cash
+if (!$admin && !can('petty_cash_'.$active_office) && !can('petty_cash')) {
+    header('Location: /'); exit;
 }
 
 // Handle inline mark-paid / mark-unpaid (POST)

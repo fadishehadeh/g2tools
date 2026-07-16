@@ -2,6 +2,7 @@
 session_start();
 require '../../config.php';
 require_login();
+require_can('finance_vendor_recon');
 ?><!DOCTYPE html>
 <html lang="en">
 <head>

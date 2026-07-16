@@ -2,6 +2,7 @@
 session_start();
 require '../config.php';
 require_login();
+require_can('finance_accountability');
 require('lib/fpdf.php');
 
 function s($key) {

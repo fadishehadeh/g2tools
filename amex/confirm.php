@@ -2,6 +2,7 @@
 session_start();
 require '../config.php';
 require_login();
+require_can('finance_cc');
 
 $sub_id = (int)($_GET['id'] ?? 0);
 if (!$sub_id) { header('Location: /'); exit; }

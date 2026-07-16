@@ -69,22 +69,54 @@ function require_superadmin(): void {
     if (!is_superadmin()) { header('Location: ' . BASE_URL . '/'); exit; }
 }
 
+// Granular permission keys for user access control
+const MODULE_PERMS = [
+    'finance_cc'             => 'Credit Card Auth',
+    'finance_accountability' => 'Accountability',
+    'finance_debit_note'     => 'Debit Note',
+    'finance_credit_note'    => 'Credit Note',
+    'finance_vendor_recon'   => 'Vendor Recon',
+    'petty_cash_doha'        => 'Petty Cash — Doha (QAR)',
+    'petty_cash_beirut'      => 'Petty Cash — Beirut (USD)',
+    'vendor'                 => 'Vendor Registration',
+    'assets'                 => 'Asset Management',
+];
+
 /**
- * Check if the current user can access a module.
- * Admins always can. Regular users depend on their per-user access flags.
+ * Check if the current user has a specific permission.
+ * Admins always pass. Regular users checked against access_modules JSON.
+ * Backward compat: old broad 'finance' and 'petty_cash' keys still work.
  */
-function can(string $module): bool {
+function can(string $perm): bool {
     $u = current_user();
     if (!$u) return false;
     if (is_admin()) return true;
-    // Per-user access stored as JSON in users.access_modules
-    $modules = json_decode($u['access_modules'] ?? '[]', true) ?: [];
-    return in_array($module, $modules);
+    $mods = json_decode($u['access_modules'] ?? '[]', true) ?: [];
+    if (in_array($perm, $mods)) return true;
+    // Backward compat: broad 'finance' covers all finance_* sub-keys
+    if (str_starts_with($perm, 'finance_') && in_array('finance', $mods)) return true;
+    // Backward compat: broad 'petty_cash' covers both offices
+    if (in_array($perm, ['petty_cash_doha','petty_cash_beirut']) && in_array('petty_cash', $mods)) return true;
+    return false;
 }
 
-function require_can(string $module): void {
+function can_any_finance(): bool {
+    if (is_admin()) return true;
+    foreach (['finance','finance_cc','finance_accountability','finance_debit_note','finance_credit_note','finance_vendor_recon'] as $p)
+        if (can($p)) return true;
+    return false;
+}
+
+function can_any_petty(): bool {
+    if (is_admin()) return true;
+    foreach (['petty_cash','petty_cash_doha','petty_cash_beirut'] as $p)
+        if (can($p)) return true;
+    return false;
+}
+
+function require_can(string $perm): void {
     require_login();
-    if (!can($module)) { header('Location: ' . BASE_URL . '/'); exit; }
+    if (!can($perm)) { header('Location: ' . BASE_URL . '/'); exit; }
 }
 
 function require_it_admin(): void {
